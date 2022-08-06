@@ -1,0 +1,85 @@
+[tool.autopep8]
+ignore = "E713, E731"
+max_line_length = 120
+
+[tool.poetry]
+name = "GuestTracker"
+version = "1.0.0"
+description = "Guest Tracker for HBA"
+authors = ["Jayme Gordon <jaymegordo@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+numpy = "==1.23.1"
+pandas = "==1.4.1"
+PyPika = "==0.47.7"
+PyYAML = "==5.4.1"
+SQLAlchemy = "==1.4.39"
+pyodbc = "==4.0.34"
+xlrd = "==2.0.1"
+# exchangelib = "^4.0.0"
+openpyxl = "==3.0.10"
+joblib = "==1.1.0"
+jgutils = {path = "../jgutils", develop = true}
+
+[tool.poetry.group.qtapp.dependencies]
+PyQt6 = "==6.3.0"
+pyqt6-qt6 = "==6.3.1"
+pyqt6-sip = "==13.4.0"
+# plotly = "==4.14.3"
+# selenium = "==3.141.0"
+WeasyPrint = "==52.5"
+CairoSVG = "==2.5.2"
+kaleido = "==0.2.0"  # 0.2.1 fails with current poetry due to 0.2.1.post0
+# chromedriver-autoinstaller = {git = "https://github.com/jaymegordo/python-chromedriver-autoinstaller.git"}
+appscript = {version = "^1.1.2", markers = "sys_platform == 'darwin'"}
+python-docx = "==0.8.11"
+tqdm = "==4.64.0"
+markdown-it-py = "==0.6.2"
+QDarkStyle = "==2.8.1"
+# seaborn = "==0.11.2"
+Jinja2 = "==2.11.3"  # optional dep for df style
+jgutils = {path = "../jgutils", extras = [], develop = true}
+
+
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^4.5.1"
+icecream = "^2.1.0"
+ipykernel = "^5.5.0"
+jupyter = "^1.0.0"
+sqlacodegen = "^3.0.0b2"
+bump2version = "^1.0.1"
+pytest = "^6.2.2"
+pytest-cov = "^2.11.1"
+openpyxl = "^3.0.7"
+tabulate = "==0.8.10"
+datascroller = "^1.4.1"
+pre-commit = "^2.12.1"
+flake8 = "^3.9.2"
+autopep8 = "^1.5.7"
+qtsass = "^0.3.0"
+jgutils = {path = "../jgutils", extras = ["colorlogging", "azurestorage"], develop = true}
+
+
+[tool.pyright]
+include = ["guesttracker", "tests"]
+ignore = ["working"]
+reportWildcardImportFromLibrary = "none"
+reportTypedDictNotRequiredAccess = "none"
+reportUnboundVariable = "information"
+reportMissingImports = "information"
+reportGeneralTypeIssues = "information"
+reportOptionalIterable = "none"
+reportOptionalMemberAccess = "information"
+reportOptionalSubscript = "information"
+reportPrivateImportUsage = "information"
+reportUnusedExpression = "information"
+reportInvalidStringEscapeSequence = "information"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+multi_line_output = 4

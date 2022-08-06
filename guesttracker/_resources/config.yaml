@@ -1,0 +1,639 @@
+url:
+    docs: https://jaymegordo.github.io/SMSEventLog/_changelog.html
+    issues: https://github.com/jaymegordo/SMSEventLog/issues/new/choose
+
+FilePaths:
+    980E FH: Fort Hills/02. Equipment Files/1. 980E Trucks
+    Factory Campaigns: Regional/SMS West Mining/Factory Campaigns
+    Availability: Regional/SMS West Mining/Availability/Reports
+    RemanDB: /Volumes/Public/Fort McMurray/service/5. Reliability Department/32. Reman/Condition Report Database
+    BaseMineCompDB: /Volumes/Public/Fort McMurray/service/5. Reliability Department/37. Analytical Tools/ComponentTracker.accdb
+
+EquipPaths:
+    FortHills: Fort Hills/02. Equipment Files
+    BaseMine: Fort McMurray/service/2. Customer Equipment Files/1. Suncor
+    Elkford: Elkford/Equipment
+    RainyRiver: Rainy River/02. Equipment Files
+    Bighorn: Acheson/COALSPUR - BIGHORN/02. Equipment Files
+    Bighorn_Opps: Acheson/COALSPUR - BIGHORN/02. Equipment Files # TODO remove this
+    CoalValley: Acheson/COAL VALLEY/02. Equipment Files
+    ConumaCoal: Acheson/Conuma Coal/02. Equipment Files
+    GahchoKue: Gahcho Kue/02. Equipment Files
+    Shovels63N: Regional/Fort McMurray/BU-145-ShovelTechs/Customer Equipment Files
+
+ModelPaths:
+    FortHills:
+        980E: 1. 980E Trucks
+        930E: 2. 930E Trucks
+        HD1500: 3. HD1500
+    BaseMine:
+        980E: 1. Trucks/2. 980E
+        930E: 1. Trucks/1. 930E
+        HD1500: 1. Trucks/3. HD1500
+
+ComponentMap:
+    WM: Wheel Motor
+    ENG: Engine
+    RAD: Radiator
+    FSUSP: Front Suspension
+    RSUSP: Rear Suspension
+    SPIND: Spindle
+    SA: Steering Arm
+    MTA: Main Traction Alternator
+    HC: Hoist Cylinder
+    SC: Steering Cylinder
+    PB: Park Brake
+
+
+Email: jgordon@smsequip.com
+
+color:
+    bg:
+        maroon: '#9e2121'
+        lightred: '#F8696B'
+        lightyellow: '#FFFFCC'
+        lightgreen: '#99FF99'
+        lightorange: '#ffbf7a'
+        lightblue: '#CCECFF'
+        lightpurple: '#e8aeff'
+        darkgreen: '#6db56d'
+        darkblue: '#6494b0'
+        medblue: '#569cd6'
+        goodgreen: '#C6EFCE'
+        tan: '#e2c091'
+        good: '#c6e3ef'
+        bad: '#FFC7CE'
+        greyrow: '#E4E4E4'
+        yellowrow: '#ffff64'
+        darkyellow: '#cccc4e'
+        darkgrey: '#999999'
+        navyblue: '#244062'
+        skyblue: '#91c3ff'
+        orange: '#f08a37'
+        bgdark: '#19232d'
+        black: 'black'
+    text:
+        goodgreen: '#006100'
+        good: '#003961'
+        bad: '#9C0006'
+        black: 'black'
+        white: 'white'
+    thead: '#244062'
+
+Lists:
+    WarrantyType:
+        - 'Yes'
+        - 'No'
+        - PRP
+        - RAMP
+        - Service
+        - Parts
+    WarrantyTypeCummins:
+        - WNTY
+        - FME
+        - LEMS
+    EventLogStatus:
+        - Complete
+        - Monitor
+        - Waiting Parts (UP)
+        - Waiting Parts (DOWN)
+        - Waiting Customer
+        - Waiting Costing
+        - Work In Progress
+        - Planned
+    WorkOrdersStatus:
+        - Open
+        - Closed
+        - Cancelled
+        - Missing Info
+        - Planned
+        - Pre-Open
+    TSIStatus:
+        - Open
+        - Closed
+        - Missing Info
+        - Waiting Review
+        - In Progress
+    ComponentCOStatus:
+        - 'True'
+        - 'False'
+    TrueFalse:
+        - 'True'
+        - 'False'
+    EquipClass:
+        - Dozer
+        - Dragline
+        - Drill
+        - Excavator
+        - Grader
+        - Loader
+        - Shovel
+        - Truck
+        - Truck_Electric
+        - Truck_Mechanical
+        - Skid_Steer
+        - Packer
+        - Crusher
+        - Component
+    FailureCategory:
+        - Assembly Issue
+        - Crack
+        - Cold
+        - Connection Loose
+        - Contamination
+        - Failed Component
+        - Factory Campaign
+        - Improper Maintenance
+        - Low Oil/ Fuel
+        - Low-hour Failure
+        - No Faults Active
+        - No Issue
+        - Normal Service
+        - Normal Wear
+        - OEM Issue
+        - Operations Damage
+        - Operator Error
+        - Snow/ Ice
+        - Vibration
+        - Water
+        - Calibration
+        - Customer Request
+    RemovalReason:
+        - High Hour Changeout
+        - Damage/Abuse
+        - Convenience
+        - Failure
+        - Pro Rata Buy-in
+        - Warranty
+        - Unknown
+    KAPhenomenon:
+        - Broken
+        - Defective Adjustment
+        - Defective Appearance
+        - Enter/Leaks
+        - High/Low Level
+        - Interference
+        - Malfunction
+        - Operational Complaint
+        - Serviceability
+        - Wear/Rust/Scratched(Surface)
+        - Wrong/Missing Part
+    KAComponentGroup:
+        - Accessory & Parts
+        - Air Cleaner
+        - Air Conditioner
+        - Air System
+        - Alternator
+        - Arm
+        - Attachment
+        - Autonomous Control System Unit
+        - Battery
+        - Bell Crank
+        - Bevel Gear System
+        - Blade (Clawler Tractor)
+        - Boom
+        - Brake
+        - Brake Cooler
+        - Bucket (Wheel Loader)
+        - Bucket(H/E Backhoe)
+        - Cab Ass'Y Group
+        - Carrier Roller
+        - Cooling Fan
+        - Damper, Universal Joint System
+        - Direct Transmission
+        - Drive Shaft
+        - Dump Body (D/T)
+        - E.D Alternator
+        - Electrical System
+        - Electronic Controller
+        - Engine Assy
+        - Final Drive
+        - Fork Lift Work Equipment
+        - Front Axle
+        - Front Wheel Brake
+        - Fuel Tank
+        - Fuel Tank Group
+        - Grid Box Assy
+        - Guard
+        - Hst Motor
+        - Hst Pump
+        - Hst System
+        - Hyd.Breaker Assy
+        - Hydr0-Mechanical Transmission(Hmt)
+        - Hydraulic Control Valve
+        - Hydraulic Cylinder
+        - Hydraulic Gear Pump
+        - Hydraulic Piping(1)
+        - Hydraulic Piston Pump
+        - Hydraulic Tank
+        - Hydro Static Steering
+        - Idler
+        - Komtrax Assy
+        - Lift Arm
+        - Machine
+        - Main Frame & Out-Rigger
+        - Monitor Panel
+        - Motor Grader,Stabilizer W/Equipment
+        - Ogm System Unit
+        - Operator Cab & Rops
+        - Operator Seat Group
+        - Others
+        - Parking Brake
+        - Pilot Control System
+        - Power Take Off System
+        - Power Train Unit
+        - Ppc Valve Ass'Y
+        - Ppc Valve, Poc Valve System
+        - Radiator Core
+        - Radiator Group
+        - Radio
+        - Rear Axle
+        - Rear Wheel Brake
+        - Recoil Spring
+        - Revolving Frame,Counter Weight
+        - Ripper
+        - Smart Construction Related
+        - Sprocket
+        - Starter
+        - Steering Brake
+        - Steering Clutch
+        - Steering System (Wheel Type)
+        - Steering Valve Assy
+        - Supply Pump
+        - Suspension System
+        - Swing Circle
+        - Swing Machinery
+        - Swing Motor
+        - Swivel Joint
+        - Tc Cooler & Oil Cooler Group
+        - Torque Convertor
+        - Torque Flow Transmission Assy
+        - Track Frame
+        - Track Roller
+        - Track Shoe
+        - Transfer
+        - Travel Motor Assy
+        - Trolley System Unit
+        - Wheel Motor Assy (Motor+Tm) Ac
+        - Wheel, Tire
+        - Wiring Harness
+        - Work Eqp Oil Cooler Group
+        - Work Equipment (Wheel Loader)
+        - Work Equipment Control
+        - Work Equipment Control Valve
+        - Work Equipment For H/E
+
+
+
+# Convert title to tablename > can select from views but not update them
+TableName:
+    Class: # map class name to title
+        EventLog: Event Log
+        WorkOrders: Work Orders
+        TSI: TSI
+        ComponentCO: Component CO
+        ComponentSMR: Component SMR
+        ComponentCOReport: Component CO
+        UnitInfo: Unit Info
+        NewFCs: FC Summary
+        FCSummary: FC Summary
+        FCDetails: FC Details
+        EmailList: Email List
+        Availability: Availability
+        OilSamples: Oil Samples
+        UserSettings: Users
+        Parts: Parts
+    Select:
+        EventLogBase: EventLog
+        FCBase: viewFactoryCampaign
+        ComponentSMR: viewPredictedCO
+        UnitInfo: UnitID
+        EmailList: EmailList
+        AvailTopDowns: Downtime
+        AvailBase: Downtime
+        UserSettings: UserSettings
+        OilSamples: OilSamples
+        Parts: Parts
+    Update:
+        FCSummary: FCSummary
+        FCDetails: FactoryCampaign
+        NewFCs: FCSummary # dont actually need this, remove somehow
+        UserSettings: UserSettings
+        OilSamples: OilSamples
+
+# Table header conversion
+Headers:
+    Event Log:
+        UID: UID
+        Passover: PassoverSort
+        Status: StatusEvent
+        MineSite: MineSite
+        Unit: Unit
+        Title: Title
+        Description: Description
+        Failure Cause: FailureCause
+        Date Added: DateAdded
+        Date Complete: DateCompleted
+        Issue Category: IssueCategory
+        Sub Category: SubCategory
+        Failure Category: Cause
+        Added By: CreatedBy
+        Time Called: TimeCalled
+        TSI: StatusTSI
+
+    Work Orders:
+        UID: UID
+        Status: StatusWO
+        Wrnty: WarrantyYN
+        Work Order: WorkOrder
+        Seg: Seg
+        Customer WO: SuncorWO
+        Customer PO: SuncorPO
+        MineSite: MineSite
+        Model: Model
+        Unit: Unit
+        Serial: Serial
+        Title: Title
+        Part Number: PartNumber
+        Order Parts: OrderParts
+        SMR: SMR
+        Date Added: DateAdded
+        Date Complete: DateCompleted
+        Added By: CreatedBy
+        Comp CO: ComponentCO
+        Pics: Pictures
+        Comments: WOComments
+
+    FC Summary:
+        MineSite: MineSite
+        FC Number: FCNumber
+        Subject: SubjectShort
+        Type: Classification
+        Action Reqd: Resp
+        Hrs: Hours
+        Part Number: PartNumber
+        Parts Avail: PartAvailability
+        Comments: Comments # not sure
+        Release Date: ReleaseDate
+        Expiry Date: ExpiryDate
+        Prog:
+        Prog %:
+        Hrs: Hours
+
+    FC Details:
+        UID: UID
+        MineSite: MineSite
+        Model: Model
+        Unit: Unit
+        FC Number: FCNumber
+        Complete: Complete
+        Sched: Scheduled
+        Closed: ManualClosed
+        Ignore: Ignore
+        Type: Classification
+        Subject: Subject
+        Date Complete SMS: DateCompleteSMS
+        Date Complete KA: DateCompleteKA
+        Expiry Date: ExpiryDate
+        SMR: SMR
+        Pics: Pictures
+        Notes: Notes
+
+    TSI:
+        UID: UID
+        Status: StatusTSI
+        Date Added: DateAdded
+        Date Submitted: DateTSISubmission
+        TSI No: TSINumber
+        WO: WorkOrder
+        MineSite: MineSite
+        Model: Model
+        Unit: Unit
+        Serial: Serial
+        Title: Title
+        Unit SMR: SMR
+        Part SMR: ComponentSMR
+        Part Name: TSIPartName
+        Part Number: PartNumber
+        Serial No: SNRemoved
+        Failure Cause: FailureCause
+        Author: TSIAuthor
+        Pics: Pictures
+        KA Phenomenon: KAPhenomenon
+        KA Comp Group: KAComponentGroup
+        Details: TSIDetails
+
+    Component CO:
+        UID: UID
+        MineSite: MineSite
+        Model: Model
+        Unit: Unit
+        Component: Component
+        Side: Modifier
+        Group CO: GroupCO
+        CO Date: DateAdded
+        Unit SMR: SMR
+        Comp SMR: ComponentSMR
+        Bench SMR: bench_smr
+        Life Achieved: life_achieved
+        SN Removed: SNRemoved
+        SN Installed: SNInstalled
+        Install SMR: install_smr
+        Wtny: WarrantyYN
+        CapUSD: CapUSD
+        SMS WO: WorkOrder
+        Customer WO: SuncorWO
+        Customer PO: SuncorPO
+        Reman: Reman
+        Removal Reason: SunCOReason
+        Failure Cause: FailureCause
+        Status: COConfirmed
+    
+    Component SMR:
+        MineSite: MineSite
+        Model: Model
+        Unit: Unit
+        Component: Component
+        Side: Modifier
+        Bench SMR: bench_smr
+        Curr Unit SMR: CurrentUnitSMR
+        SMR Last CO: SMRLastCO
+        Curr Comp SMR: CurrentComponentSMR
+        Pred. CO Date: PredictedCODate
+        Life Remaining: LifeRemaining
+        Last SN Installed: SNInstalled
+
+    Unit Info:
+        MineSite: MineSite
+        Customer: Customer
+        Equip Type: EquipClass
+        Model: Model
+        Serial: Serial
+        Unit: Unit
+        Current SMR: CurrentSMR
+        SMR Measure Date: DateSMR
+        Delivery Date: DeliveryDate
+        Warranty Remaining: Remaining
+        GE Warranty: GE_Remaining
+        PLM Target: TargetPayload
+        Notes: Notes
+
+    Email List:
+        UserGroup: UserGroup
+        MineSite: MineSite
+        Email: Email
+        Passover: Passover
+        WO Request: WORequest
+        FC Cancelled: FCCancelled
+        Pics DLS: PicsDLS
+        PRP: PRP
+        FC Summary: FCSummary
+        TSI: TSI
+        RAMP: RAMP
+        Service: Service
+        Parts: Parts
+        AvailDaily: AvailDaily
+        AvailReports: AvailReports
+        FleetReport: FleetReport
+        SMRReport: SMRReport
+    
+    Availability:
+        Unit: Unit
+        ShiftDate: ShiftDate
+        StartDate: StartDate
+        EndDate: EndDate
+        Total: Duration
+        SMS: SMS
+        Suncor: Suncor
+        Category Assigned: CategoryAssigned
+        DownReason: DownReason
+        Comment: Comment
+        Assigned: Assigned
+    
+    Users:
+        UserName: UserName
+        Email: Email
+        LastLogin: LastLogin
+        Version: Ver
+        Domain: Domain
+        UserGroup: UserGroup
+        MineSite: MineSite
+        ODBC Driver: odbc_driver
+        Install Dir: install_dir
+
+    Oil Samples:
+        Silicon (Si): Si
+        Sodium (Na): Na
+        Potassium (K): K
+        Iron (Fe): Fe
+        Chromium (Cr): Cr
+        Lead (Pb): Pb
+        Copper (Cu): Cu
+        Tin (Sn): Sn
+        Aluminum (Al): Al
+        Nickel (Ni): Ni
+        Silver (Ag): Ag
+        Titanium (Ti): Ti
+        Boron (B): B
+        Phosphorus (P): P
+        Zinc (Zn): Zn
+        Calcium (Ca): Ca
+        Cadmium (Cd): Cd
+        Barium (Ba): Ba
+        Magnesium (Mg): Mg
+        Manganese (Mn): Mn
+        Molybdenum (Mo): Mo
+        Vanadium (V): V
+        Antimony (Sb): Sb
+        Lithium (Li): Li
+        Beryllium (Be): Be
+        Water %: water
+        Fuel %: fuel
+        Glycol %: glycol
+        NIT (A/cm): NIT
+        OX (A/cm): OX
+        SUL (A/cm): SUL
+        Soot %: soot
+        Ethylene Glycol (%): eth_glycol
+        Polypropylene Glycol (%): prop_glycol
+        Grit: grit
+        Sediment: sediment
+        Precipitate: precip
+        Clarity: clarity
+        Code: code
+        color: color
+        Conductivity: conductivity
+        Coolant Changed: coolant_changed
+        Freeze Point: freeze_pt
+        Coolant Type: coolant_type
+        Visc 40°C cSt: visc_40
+        Visc 100°C cSt: visc_100
+        OPC Code: opc
+        OPC > 4µ: opc_4
+        OPC > 6µ: opc_6
+        OPC > 14µ: opc_14
+        OPC > 21µ: opc_21
+        OPC > 38µ: opc_38
+        OPC > 70µ: opc_70
+        'Cutting #/ml': cutting
+        'Sliding #/ml': sliding
+        'Fatigue #/ml': fatigue
+        'Non-Metal #/ml': non_metal
+        'Fibers #/ml': fibers
+        Cutting Mean Size µ: cutting_mean
+        Sliding Mean Size µ: sliding_mean
+        Fatigue Mean Size µ: fatigue_mean
+        Non-Metal Mean Size µ: non_metal_mean
+        Visc Index: visc_idx
+        AN (FTIR) mgKOH/g: AN
+        BN (FTIR) mgKOH/g: BN
+        ISO Count: iso_count
+        'ISO > 4µ': iso_4
+        'ISO > 6µ': iso_6
+        'ISO > 14µ': iso_14
+        'ISO > 25µ': iso_25
+        'ISO > 38µ': iso_38
+        'ISO > 70µ': iso_70
+        '% Urea DEF': urea_def
+        Boiling Point: boiling_pt
+        Magnetic Precipitate: mag_precip
+        Magnification: magnification
+        Nitrites: nitrates
+        Odor: odor
+        Patch Size µm: patch_size
+        Refractive Index: refractive_idx
+        Solvent: solvent
+        Sulphur in fuel ppm: sulphur_fuel_ppm
+        TAN-E mg/g: TAN-E
+        Total ppm: total_ppm
+
+    Parts:
+        Model Base: ModelBase
+        Model: Model
+        Part Number: PartNo
+        Part Name: PartName
+        Alt Part Name: PartNameAlt
+
+    FCImport:
+        fc_number_seq: FCNumber
+        distributor: Distributor
+        branch: Branch
+        fc_start_date: StartDate
+        model: Model
+        serial: Serial
+        fc_end_date: EndDate
+        subject: Subject
+        claim_no: ClaimNo
+        completion_smr: SMR
+        completion_date: DateCompleteKA
+        status: Status
+        smr_limit: SMRLimit
+        classification: Classification
+        fid_expiration_date: ExpiryDate
+        stock_kac: Stock
+
+Platform:
+    mac:
+        font size: 15
+    win:
+        font size: 11

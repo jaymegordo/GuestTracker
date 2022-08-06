@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <header id="header"></header>
+        <footer id="pagenum"></footer>
+        <footer id="footer_image"></footer>
+        <footer id="footer"></footer>
+
+        <h2>Component Failure Summary</h2>
+        <section id="header_data">
+            {{ df_head }}
+        </section>
+
+        <section id="html_body">
+            {% for name, text in body_sections.items() %}
+                <p>
+                    <b>{{ name }}:</b><br>
+                    {{ text }}
+                </p>
+            {% endfor %}
+        </section>
+
+        {% if sections  %}
+            {% include "sections.html" %}
+            {% block sections %}{% endblock %}
+        {% endif %}
+
+    </body>
+</html>
