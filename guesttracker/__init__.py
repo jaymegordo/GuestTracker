@@ -2,7 +2,7 @@ from datetime import date  # noqa
 from datetime import datetime as dt  # noqa
 from datetime import timedelta as delta  # noqa
 
-from smseventlog.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN  # noqa
+from guesttracker.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN  # noqa
 
 # force config to be imported first
 if True:

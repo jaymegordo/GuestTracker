@@ -4,7 +4,7 @@ from onedrivesdk_fork.helpers import GetAuthCodeServer  # type: ignore
 from onedrivesdk_fork.helpers.resource_discovery import \
     ResourceDiscoveryRequest  # type: ignore
 
-from smseventlog import functions as f
+from guesttracker import functions as f
 
 redirect_uri = 'http://localhost:8080'
 # redirect_uri = 'https://login.microsoftonline.com/common/oauth2/nativeclient/'

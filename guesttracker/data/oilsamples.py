@@ -6,14 +6,14 @@ from timeit import default_timer as timer
 import pandas as pd
 import requests
 
+from guesttracker import config as cf
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.database import db
+from guesttracker.queries.oil import OilSamples
+from guesttracker.utils.credentials import CredentialManager
 from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.database import db
-from smseventlog.queries.oil import OilSamples
-from smseventlog.utils.credentials import CredentialManager
 
 log = getlog(__name__)
 
@@ -385,7 +385,7 @@ def example():
 
 
 def import_history():
-    from smseventlog import queries as qr
+    from guesttracker import queries as qr
 
     oils = OilSamplesDownloader()
     rng = pd.date_range(dt(2020, 1, 1), dt(2021, 4, 1), freq='M')

@@ -19,21 +19,21 @@ from PyQt6.QtWidgets import (
     QStyleOptionTab, QStylePainter, QTabBar, QTableWidget, QTableWidgetItem,
     QTabWidget, QTextBrowser, QTextEdit, QTreeView, QVBoxLayout, QWidget)
 
-from smseventlog import VERSION
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import queries as qr
-from smseventlog.database import db
-from smseventlog.gui import _global as gbl
-from smseventlog.gui import formfields as ff
-from smseventlog.utils import fileops as fl
+from guesttracker import VERSION
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import queries as qr
+from guesttracker.database import db
+from guesttracker.gui import _global as gbl
+from guesttracker.gui import formfields as ff
+from guesttracker.utils import fileops as fl
 
 if TYPE_CHECKING:
-    from smseventlog.gui.tables import TableView
-    from smseventlog.queries import Filter
+    from guesttracker.gui.tables import TableView
+    from guesttracker.queries import Filter
 
 log = getlog(__name__)
 
@@ -526,7 +526,7 @@ class CustomFC(InputForm):
         if not self.check_enforce_items():
             return
 
-        from smseventlog.data import factorycampaign as fc
+        from guesttracker.data import factorycampaign as fc
         units = fc.parse_units(units=self.fUnits.val, prefix=self.fPrefix.val)
         self.units = units
 
@@ -990,7 +990,7 @@ class FailureReport(BaseDialog):
 
     @classmethod
     def example(cls, uid: int = 163093319526):
-        from smseventlog import eventfolders as efl
+        from guesttracker import eventfolders as efl
         e = dbt.Row.example(uid=uid)
         ef = efl.EventFolder.example(e=e)
         dlg = cls(p_start=ef.p_pics, unit=e.Unit, e=e)
@@ -1090,7 +1090,7 @@ class FailureReport(BaseDialog):
             plm_report = True
 
             # check if PLM needs to be updated first
-            from smseventlog.data.internal import plm
+            from guesttracker.data.internal import plm
             unit = self.unit
             maxdate = plm.max_date_plm(unit=unit)
 
@@ -1456,7 +1456,7 @@ class Preferences(BaseDialog):
         self.queued_funcs = {}
 
         # limit available tabs
-        from smseventlog.gui.gui import TabWidget
+        from guesttracker.gui.gui import TabWidget
         user = self.mw.u if not parent is None else None
         available_tabs = TabWidget.available_tabs(user=user)
 

@@ -3,10 +3,10 @@ from datetime import timedelta as delta
 
 import pandas as pd
 
-from smseventlog import config as cf
-from smseventlog import errors as er
-from smseventlog import getlog
-from smseventlog.database import db
+from guesttracker import config as cf
+from guesttracker import errors as er
+from guesttracker import getlog
+from guesttracker.database import db
 
 log = getlog(__name__)
 
@@ -29,7 +29,7 @@ def process_df_smr(df: pd.DataFrame, minesite: str) -> pd.DataFrame:
 
 
 def import_unit_hrs_email(minesite: str) -> None:
-    from smseventlog.utils.exchange import combine_email_data
+    from guesttracker.utils.exchange import combine_email_data
     maxdate = db.max_date_db(table='UnitSMR', field='DateSMR', minesite=minesite) + delta(days=1)
 
     df = combine_email_data(
@@ -132,7 +132,7 @@ def read_unit_hrs(p):
 
 
 def update_comp_smr():
-    from smseventlog.gui.dialogs import base as dlgs
+    from guesttracker.gui.dialogs import base as dlgs
     try:
         cursor = db.cursor
         res = cursor.execute('updateUnitComponentSMR').fetchall()[0]

@@ -1,6 +1,6 @@
 import pytest  # noqa
 
-from smseventlog import functions as f
+from guesttracker import functions as f
 
 
 def test_to_snake():

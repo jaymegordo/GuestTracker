@@ -1,25 +1,5 @@
 url:
-    docs: https://jaymegordo.github.io/SMSEventLog/_changelog.html
-    issues: https://github.com/jaymegordo/SMSEventLog/issues/new/choose
-
-FilePaths:
-    980E FH: Fort Hills/02. Equipment Files/1. 980E Trucks
-    Factory Campaigns: Regional/SMS West Mining/Factory Campaigns
-    Availability: Regional/SMS West Mining/Availability/Reports
-    RemanDB: /Volumes/Public/Fort McMurray/service/5. Reliability Department/32. Reman/Condition Report Database
-    BaseMineCompDB: /Volumes/Public/Fort McMurray/service/5. Reliability Department/37. Analytical Tools/ComponentTracker.accdb
-
-EquipPaths:
-    FortHills: Fort Hills/02. Equipment Files
-    BaseMine: Fort McMurray/service/2. Customer Equipment Files/1. Suncor
-    Elkford: Elkford/Equipment
-    RainyRiver: Rainy River/02. Equipment Files
-    Bighorn: Acheson/COALSPUR - BIGHORN/02. Equipment Files
-    Bighorn_Opps: Acheson/COALSPUR - BIGHORN/02. Equipment Files # TODO remove this
-    CoalValley: Acheson/COAL VALLEY/02. Equipment Files
-    ConumaCoal: Acheson/Conuma Coal/02. Equipment Files
-    GahchoKue: Gahcho Kue/02. Equipment Files
-    Shovels63N: Regional/Fort McMurray/BU-145-ShovelTechs/Customer Equipment Files
+    issues: https://github.com/jaymegordo/guesttracker/issues/new/choose
 
 ModelPaths:
     FortHills:
@@ -45,7 +25,7 @@ ComponentMap:
     PB: Park Brake
 
 
-Email: jgordon@smsequip.com
+Email: jaymegordo@gmail.com
 
 color:
     bg:
@@ -521,91 +501,6 @@ Headers:
         ODBC Driver: odbc_driver
         Install Dir: install_dir
 
-    Oil Samples:
-        Silicon (Si): Si
-        Sodium (Na): Na
-        Potassium (K): K
-        Iron (Fe): Fe
-        Chromium (Cr): Cr
-        Lead (Pb): Pb
-        Copper (Cu): Cu
-        Tin (Sn): Sn
-        Aluminum (Al): Al
-        Nickel (Ni): Ni
-        Silver (Ag): Ag
-        Titanium (Ti): Ti
-        Boron (B): B
-        Phosphorus (P): P
-        Zinc (Zn): Zn
-        Calcium (Ca): Ca
-        Cadmium (Cd): Cd
-        Barium (Ba): Ba
-        Magnesium (Mg): Mg
-        Manganese (Mn): Mn
-        Molybdenum (Mo): Mo
-        Vanadium (V): V
-        Antimony (Sb): Sb
-        Lithium (Li): Li
-        Beryllium (Be): Be
-        Water %: water
-        Fuel %: fuel
-        Glycol %: glycol
-        NIT (A/cm): NIT
-        OX (A/cm): OX
-        SUL (A/cm): SUL
-        Soot %: soot
-        Ethylene Glycol (%): eth_glycol
-        Polypropylene Glycol (%): prop_glycol
-        Grit: grit
-        Sediment: sediment
-        Precipitate: precip
-        Clarity: clarity
-        Code: code
-        color: color
-        Conductivity: conductivity
-        Coolant Changed: coolant_changed
-        Freeze Point: freeze_pt
-        Coolant Type: coolant_type
-        Visc 40°C cSt: visc_40
-        Visc 100°C cSt: visc_100
-        OPC Code: opc
-        OPC > 4µ: opc_4
-        OPC > 6µ: opc_6
-        OPC > 14µ: opc_14
-        OPC > 21µ: opc_21
-        OPC > 38µ: opc_38
-        OPC > 70µ: opc_70
-        'Cutting #/ml': cutting
-        'Sliding #/ml': sliding
-        'Fatigue #/ml': fatigue
-        'Non-Metal #/ml': non_metal
-        'Fibers #/ml': fibers
-        Cutting Mean Size µ: cutting_mean
-        Sliding Mean Size µ: sliding_mean
-        Fatigue Mean Size µ: fatigue_mean
-        Non-Metal Mean Size µ: non_metal_mean
-        Visc Index: visc_idx
-        AN (FTIR) mgKOH/g: AN
-        BN (FTIR) mgKOH/g: BN
-        ISO Count: iso_count
-        'ISO > 4µ': iso_4
-        'ISO > 6µ': iso_6
-        'ISO > 14µ': iso_14
-        'ISO > 25µ': iso_25
-        'ISO > 38µ': iso_38
-        'ISO > 70µ': iso_70
-        '% Urea DEF': urea_def
-        Boiling Point: boiling_pt
-        Magnetic Precipitate: mag_precip
-        Magnification: magnification
-        Nitrites: nitrates
-        Odor: odor
-        Patch Size µm: patch_size
-        Refractive Index: refractive_idx
-        Solvent: solvent
-        Sulphur in fuel ppm: sulphur_fuel_ppm
-        TAN-E mg/g: TAN-E
-        Total ppm: total_ppm
 
     Parts:
         Model Base: ModelBase

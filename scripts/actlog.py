@@ -3,8 +3,8 @@ Script to update activity log time entries
 """
 import argparse
 
-from smseventlog import dt, getlog
-from smseventlog.utils import excel as ex
+from guesttracker import dt, getlog
+from guesttracker.utils import excel as ex
 
 log = getlog(__name__)
 cli = argparse.ArgumentParser()

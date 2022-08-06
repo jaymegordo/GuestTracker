@@ -5,23 +5,23 @@ from typing import *
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
-from smseventlog import charts as ch
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import queries as qr
-from smseventlog import styles as st
-from smseventlog.database import db
-from smseventlog.eventfolders import EventFolder
-from smseventlog.utils import email as em
-from smseventlog.utils.download import Gtk, Kaleido
+from guesttracker import charts as ch
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import queries as qr
+from guesttracker import styles as st
+from guesttracker.database import db
+from guesttracker.eventfolders import EventFolder
+from guesttracker.utils import email as em
+from guesttracker.utils.download import Gtk, Kaleido
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
 
-    from smseventlog.queries import QueryBase
+    from guesttracker.queries import QueryBase
 
 p_reports = cf.p_res / 'reports'
 log = getlog(__name__)
@@ -304,7 +304,7 @@ class Report(object):
         p = p_base / f'{self.title}.{self.ext}'
 
         if p.exists():
-            from smseventlog.gui.dialogs.base import msgbox
+            from guesttracker.gui.dialogs.base import msgbox
             msg = f'File "{p.name}" already exists. Overwrite?'
             return msgbox(msg=msg, yesno=True)
 
@@ -428,7 +428,7 @@ class Report(object):
 
     def open_(self):
         """Open report filepath"""
-        from smseventlog.utils.fileops import open_folder
+        from guesttracker.utils.fileops import open_folder
         open_folder(self.p_rep)
 
     def update_from_report(self, report=None) -> None:
@@ -716,7 +716,7 @@ class FailureReport(Report):
             details=e.Description)
 
         # use eventfolder to get pictures
-        from smseventlog import eventfolders as efl
+        from guesttracker import eventfolders as efl
         ef = efl.EventFolder.example(uid=uid, e=e)
         pics = ef.pics[:3]
 
@@ -972,7 +972,7 @@ class OilSamples(Section):
 class FrameCracks(Section):
     def __init__(self, report, **kw):
         super().__init__(title='Frame Cracks', report=report)
-        from smseventlog.data import framecracks as frm
+        from guesttracker.data import framecracks as frm
 
         m = dict(df=frm.load_processed_excel())
 

@@ -4,9 +4,9 @@ Command line script to import fault, haul, or fix dls folders
 
 import argparse
 
-import smseventlog.data.internal.plm as plm
-from smseventlog import delta, dt, getlog
-from smseventlog.data.internal.utils import FileProcessor
+import guesttracker.data.internal.plm as plm
+from guesttracker import delta, dt, getlog
+from guesttracker.data.internal.utils import FileProcessor
 
 log = getlog(__name__)
 

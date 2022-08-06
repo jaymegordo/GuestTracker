@@ -5,12 +5,12 @@ from typing import *
 import requests
 from packaging.version import parse as parse_version
 
+from guesttracker import config as cf
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog
 from jgutils import fileops as flo
 from jgutils.azureblob import BlobStorage
-from smseventlog import config as cf
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog
 
 log = getlog(__name__)
 
@@ -132,7 +132,7 @@ class Gtk(Downloader):
         Union[bool, None]
             True if download/unpack succeeded
         """
-        bs = BlobStorage(container='smseventlog')
+        bs = BlobStorage(container='guesttracker')
 
         # This will be unzipped and create /extensions/GTK3-Runtime Win64/bin.. etc
         p = cf.p_ext / 'GTK3-Runtime Win64.zip'
@@ -172,7 +172,7 @@ class Kaleido(Downloader):
     def download_with_worker(self) -> None:
         """NOTE not used"""
         if not self.mw is None:
-            from smseventlog.gui.multithread import Worker
+            from guesttracker.gui.multithread import Worker
 
             Worker(func=self.download_and_unpack, mw=self.mw) \
                 .add_signals(('result', dict(func=self.handle_dl_result))) \

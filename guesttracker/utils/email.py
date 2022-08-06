@@ -2,9 +2,9 @@ import re
 from pathlib import Path
 from typing import *
 
-from smseventlog import config as cf
-from smseventlog import functions as f
-from smseventlog import getlog
+from guesttracker import config as cf
+from guesttracker import functions as f
+from guesttracker import getlog
 
 if cf.is_win:
     import win32com.client as win32

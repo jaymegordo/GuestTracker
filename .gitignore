@@ -11,7 +11,7 @@ src
 target
 *.egg-info
 
-smseventlog/_unencrypted
+guesttracker/_unencrypted
 
 .DS_Store
 Pipfile.lock
@@ -22,16 +22,16 @@ __pycache__
 *$py.class
 
 *.xlsm
-smseventlog/_resources/secret
+guesttracker/_resources/secret
 SMS.zip
-smseventlog/_resources/csv/avail_email.csv
+guesttracker/_resources/csv/avail_email.csv
 avail.html
 html_out.html
-smseventlog/_resources/csv/fleet_monthly_report_email.csv
+guesttracker/_resources/csv/fleet_monthly_report_email.csv
 run.spec
 _info/utils/generate-iconset.py
 pyu.log
-smseventlog/utils/onedrive.py
+guesttracker/utils/onedrive.py
 report.docx
 report.html
 docs/_build

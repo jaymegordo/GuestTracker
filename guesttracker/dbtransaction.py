@@ -6,13 +6,13 @@ from sqlalchemy import and_, literal
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.query import Query as SQLAQuery
 
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.database import db
-from smseventlog.utils import dbmodel as dbm
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.database import db
+from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
-    from smseventlog.gui.datamodel import TableDataModel
+    from guesttracker.gui.datamodel import TableDataModel
 
 log = getlog(__name__)
 
@@ -24,7 +24,7 @@ class DBTransaction():
 
         Parameters
         ----------
-        data_model : smseventlog.gui.tables.TableWidget, optional
+        data_model : guesttracker.gui.tables.TableWidget, optional
             table model from tables.py, default None
         dbtable : dbm.Base, optional
             dbtable definition not instance, default None

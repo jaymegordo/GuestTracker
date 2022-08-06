@@ -14,10 +14,10 @@ from pypika import Table as T
 from pypika import functions as fn
 from pypika.terms import PseudoColumn
 
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.queries import QueryBase
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.queries import QueryBase
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
@@ -146,7 +146,7 @@ class TSIReport(TSI):
 
     @classmethod
     def from_date(cls, d_lower: dt, minesite: str = 'FortHills') -> 'TSIReport':
-        from smseventlog.queries import first_last_month
+        from guesttracker.queries import first_last_month
         d_rng = first_last_month(d_lower)
         return cls(d_rng=d_rng, minesite=minesite)
 

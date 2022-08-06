@@ -5,9 +5,9 @@ from datetime import datetime as dt
 from datetime import timedelta as delta
 from typing import *
 
-from smseventlog import getlog
-from smseventlog.errors import AppNotOpenError
-from smseventlog.gui import _global as gbl
+from guesttracker import getlog
+from guesttracker.errors import AppNotOpenError
+from guesttracker.gui import _global as gbl
 
 if sys.platform.startswith('win'):
     import win32com.client

@@ -7,13 +7,13 @@ from pypika import MSSQLQuery as Query
 from pypika import Table as T
 from pypika import functions as fn
 
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.database import db
-from smseventlog.queries import QueryBase, first_last_month, last_day_month
-from smseventlog.queries.smr import UnitSMRMonthly
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.database import db
+from guesttracker.queries import QueryBase, first_last_month, last_day_month
+from guesttracker.queries.smr import UnitSMRMonthly
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler

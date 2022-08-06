@@ -9,16 +9,16 @@ from typing import *
 import pandas as pd
 from joblib import Parallel, delayed
 
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import delta, dt
-from smseventlog import eventfolders as efl
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.data.internal import dls, faults, plm
-from smseventlog.database import db
-from smseventlog.queries import TableKeys
-from smseventlog.utils import fileops as fl
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import delta, dt
+from guesttracker import eventfolders as efl
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.data.internal import dls, faults, plm
+from guesttracker.database import db
+from guesttracker.queries import TableKeys
+from guesttracker.utils import fileops as fl
 
 log = getlog(__name__)
 

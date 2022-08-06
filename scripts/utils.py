@@ -1,12 +1,12 @@
 import argparse
 import subprocess
 
-from smseventlog import database as dtb
-from smseventlog import delta, dt, getlog
-from smseventlog import queries as qr
-from smseventlog.data import framecracks as frm
-from smseventlog.queries.misc import ACMotorInspections
-from smseventlog.reports import SMRReport
+from guesttracker import database as dtb
+from guesttracker import delta, dt, getlog
+from guesttracker import queries as qr
+from guesttracker.data import framecracks as frm
+from guesttracker.queries.misc import ACMotorInspections
+from guesttracker.reports import SMRReport
 
 if True:
     from jgutils.secrets import SecretsManager
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             'sqlacodegen',
             con_str,
             '--outfile',
-            'smseventlog/utils/dbmodel.py']
+            'guesttracker/utils/dbmodel.py']
 
         subprocess.run(args)
 
@@ -82,5 +82,5 @@ if __name__ == '__main__':
         df = frm.pre_process_framecracks(d_lower=a.framecracks)
 
     elif a.update_exch_pw:
-        from smseventlog.utils.credentials import CredentialManager
+        from guesttracker.utils.credentials import CredentialManager
         CredentialManager('exchange', gui=False).update_password_db(password=a.update_exch_pw)

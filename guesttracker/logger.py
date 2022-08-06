@@ -16,8 +16,8 @@ except ModuleNotFoundError:
     # running on azure
     Formatter = logging.Formatter
 
-from smseventlog import config as cf
-from smseventlog.config import AZURE_WEB
+from guesttracker import config as cf
+from guesttracker.config import AZURE_WEB
 
 # simple colors
 _palette = dict(
@@ -100,7 +100,7 @@ class Logger(logging.Logger):
             fmt_file = logging.Formatter(
                 '%(asctime)s  %(levelname)-7s %(lineno)-4d %(name)-20s %(message)s', datefmt='%m-%d %H:%M:%S')
 
-            log_path = p_log / 'smseventlog.log'
+            log_path = p_log / 'guesttracker.log'
             fh = RotatingFileHandler(log_path, maxBytes=100000, backupCount=0)
             fh.setLevel(logging.DEBUG)
             fh.setFormatter(fmt_file)
@@ -139,7 +139,7 @@ def getlog(name):
 
     Examples
     --------
-    >>> from smseventlog import getlog
+    >>> from guesttracker import getlog
     >>> log = getlog(__name__)
     """
     name = '.'.join(str(name).split('.')[1:])

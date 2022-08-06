@@ -3,16 +3,16 @@ from PyQt6.QtCore import QDir, QSettings, Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QSplashScreen
 
-from smseventlog import VERSION
-from smseventlog import config as cf
-from smseventlog import dt
-from smseventlog import errors as er
-from smseventlog import getlog
-from smseventlog.gui import _global as gbl
-from smseventlog.gui import delegates, gui, tables, update
-from smseventlog.gui.dialogs import base, refreshtables
+from guesttracker import VERSION
+from guesttracker import config as cf
+from guesttracker import dt
+from guesttracker import errors as er
+from guesttracker import getlog
+from guesttracker.gui import _global as gbl
+from guesttracker.gui import delegates, gui, tables, update
+from guesttracker.gui.dialogs import base, refreshtables
 
-# from smseventlog.gui.multithread import Worker
+# from guesttracker.gui.multithread import Worker
 
 log = getlog(__name__)
 
@@ -33,7 +33,7 @@ def launch():
 
     app = gbl.get_qt_app()
 
-    s = QSettings('sms', 'smseventlog', app)
+    s = QSettings('sms', 'guesttracker', app)
 
     pixmap = QPixmap(str(cf.p_res / 'images/sms_icon.png'))
     splash = QSplashScreen(pixmap, Qt.WindowType.WindowStaysOnTopHint)

@@ -16,8 +16,8 @@ import sys
 
 import PyInstaller.__main__
 
-from smseventlog import config as cf
-from smseventlog import getlog
+from guesttracker import config as cf
+from guesttracker import getlog
 
 log = getlog(__name__)
 
@@ -36,15 +36,15 @@ a = CLI.parse_args()
 
 if sys.platform.startswith('win'):
     project_path = 'Y:/OneDrive/Python/SMS'
-    name = 'smseventlog_win'
+    name = 'guesttracker_win'
 else:
     project_path = '/Users/Jayme/OneDrive/Python/SMS'
-    name = 'smseventlog_mac'
+    name = 'guesttracker_mac'
 
-sys.path.append(project_path)  # so we can import from smseventlog
+sys.path.append(project_path)  # so we can import from guesttracker
 
 
-spec_file = str(cf.p_root / 'smseventlog.spec')
+spec_file = str(cf.p_root / 'guesttracker.spec')
 p_build = cf.p_build / f'build/{name}'
 p_dist = cf.p_build / 'dist'
 

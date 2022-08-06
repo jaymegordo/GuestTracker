@@ -8,10 +8,10 @@ import pandas as pd
 from exchangelib import (
     DELEGATE, Account, Configuration, Credentials, FaultTolerance)
 
-from smseventlog import getlog
-from smseventlog.config import AZURE_WEB
-from smseventlog.utils import fileops as fl
-from smseventlog.utils.credentials import CredentialManager
+from guesttracker import getlog
+from guesttracker.config import AZURE_WEB
+from guesttracker.utils import fileops as fl
+from guesttracker.utils.credentials import CredentialManager
 
 # silence exchangelib naive datetime on last_modified_time info log
 logging.getLogger('exchangelib.fields').setLevel(logging.WARNING)

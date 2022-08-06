@@ -7,15 +7,15 @@ from pypika import MSSQLQuery as Query
 from pypika import Table as T
 from pypika import Tables
 
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.queries import QueryBase
+from guesttracker.queries.el import EventLogBase
 from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.queries import QueryBase
-from smseventlog.queries.el import EventLogBase
 
 log = getlog(__name__)
 
@@ -161,7 +161,7 @@ class ACMotorInspections(FileQuery):
         style.to_excel(p, index=False, freeze_panes=(1, 0))
 
         if open_:
-            from smseventlog.utils import fileops as fl
+            from guesttracker.utils import fileops as fl
             fl.open_folder(p)
 
     def show_required_notifications(self) -> None:

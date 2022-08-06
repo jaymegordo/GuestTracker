@@ -2,12 +2,12 @@
 
 SHELL := /bin/bash
 utils := @poetry run python -m scripts.utils
-code := smseventlog scripts az_*
+code := guesttracker scripts az_*
 
 
 .PHONY : codecount
 codecount:  ## show lines of code
-	@pygount --suffix=py --format=summary smseventlog
+	@pygount --suffix=py --format=summary guesttracker
 
 .PHONY : format
 format:  ## autopep, isort, flake
@@ -50,19 +50,19 @@ reqs:  # write requirements.txt from pyproject.toml for azure app
 	@poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 .PHONY : app
-app:  ## push smseventlog app to azure
+app:  ## push guesttracker app to azure
 	@if ! docker info >/dev/null 2>&1; then\
 		echo "Starting Docker";\
 		open /Applications/Docker.app;\
 	fi
-	@func azure functionapp publish smseventlog-app --build-native-deps
+	@func azure functionapp publish guesttracker-app --build-native-deps
 
 .PHONY : build
-build:  ## make smseventlog.exe and push to aws s3 bucket (pyupdater)
+build:  ## make guesttracker.exe and push to aws s3 bucket (pyupdater)
 	@bash scripts/build.sh true
 
 .PHONY : build-local
-build-local:  ## make smseventlog.exe for local testing (pyinstaller)
+build-local:  ## make guesttracker.exe for local testing (pyinstaller)
 	@poetry run python -m scripts.build
 
 .PHONY : require_poetry

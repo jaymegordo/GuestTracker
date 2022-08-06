@@ -1,14 +1,14 @@
 import os
 
-from smseventlog import VERSION
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import dt
-from smseventlog import errors as er
-from smseventlog import getlog
-from smseventlog.database import db, get_odbc_driver
-from smseventlog.gui import _global as gbl
-from smseventlog.utils.dbmodel import UserSettings
+from guesttracker import VERSION
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import dt
+from guesttracker import errors as er
+from guesttracker import getlog
+from guesttracker.database import db, get_odbc_driver
+from guesttracker.gui import _global as gbl
+from guesttracker.utils.dbmodel import UserSettings
 
 log = getlog(__name__)
 

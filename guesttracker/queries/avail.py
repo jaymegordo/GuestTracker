@@ -13,13 +13,13 @@ from pypika import Order
 from pypika import functions as fn
 from pypika.terms import PseudoColumn
 
-from smseventlog import config as cf
-from smseventlog import dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.queries import QueryBase, df_period
-from smseventlog.queries.smr import UnitSMRMonthly
+from guesttracker import config as cf
+from guesttracker import dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.queries import QueryBase, df_period
+from guesttracker.queries.smr import UnitSMRMonthly
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler

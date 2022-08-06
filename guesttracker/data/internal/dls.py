@@ -10,16 +10,16 @@ import pandas as pd
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-from smseventlog import delta, dt
-from smseventlog import errors as er
-from smseventlog import eventfolders as efl
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.data.internal import faults as flt
-from smseventlog.data.internal import plm
-from smseventlog.data.internal import utils as utl
-from smseventlog.database import db
-from smseventlog.utils import fileops as fl
+from guesttracker import delta, dt
+from guesttracker import errors as er
+from guesttracker import eventfolders as efl
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.data.internal import faults as flt
+from guesttracker.data.internal import plm
+from guesttracker.data.internal import utils as utl
+from guesttracker.database import db
+from guesttracker.utils import fileops as fl
 
 log = getlog(__name__)
 
@@ -68,7 +68,7 @@ def import_dls(p: Path, mw=None) -> dict:
 
     # callback to update statusbar
     if mw is None:
-        from smseventlog.gui._global import update_statusbar as us
+        from guesttracker.gui._global import update_statusbar as us
     else:
         us = mw.update_statusbar
 
@@ -143,7 +143,7 @@ def import_dls(p: Path, mw=None) -> dict:
     title = f'{name} - {suffix}'
     m_result['name'] = name
 
-    from smseventlog.eventfolders import UnitFolder
+    from guesttracker.eventfolders import UnitFolder
     uf = UnitFolder(unit=unit)
     p_dst = uf.p_dls / f'{d.year}/{title}'
 
@@ -326,8 +326,8 @@ def get_recent_dls_unit(unit: str) -> Path:
 
 def zip_recent_dls_unit(unit: str, _zip=True) -> Path:
     """Func for gui to find (optional zip) most recent dls folder by parsing date in folder title"""
-    from smseventlog.gui import _global as gbl
-    from smseventlog.gui.dialogs.base import msg_simple, msgbox
+    from guesttracker.gui import _global as gbl
+    from guesttracker.gui.dialogs.base import msg_simple, msgbox
 
     p_dls = get_recent_dls_unit(unit=unit)
 
@@ -601,7 +601,7 @@ def import_stats(lst=None, d_lower=dt(2021, 1, 1)):
 
 def get_list_stats(unit):
     """Return list of STATS csvs for specific unit"""
-    from smseventlog.eventfolders import UnitFolder
+    from guesttracker.eventfolders import UnitFolder
     uf = UnitFolder(unit=unit)
 
     p_dls = uf.p_dls

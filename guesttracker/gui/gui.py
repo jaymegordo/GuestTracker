@@ -11,21 +11,21 @@ from PyQt6.QtWidgets import (
 from selenium.webdriver.remote.webdriver import WebDriver
 from sentry_sdk import configure_scope
 
-from smseventlog import config as cf
-from smseventlog import delta
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog, users
-from smseventlog.data import factorycampaign as fc
-from smseventlog.data.units import update_comp_smr
-from smseventlog.database import db
-from smseventlog.gui import _global as gbl
-from smseventlog.gui import tables as tbls
-from smseventlog.gui.dialogs import base as dlgs
-from smseventlog.gui.multithread import Worker
-from smseventlog.gui.update import Updater
-from smseventlog.utils import fileops as fl
-from smseventlog.utils.credentials import CredentialManager
+from guesttracker import config as cf
+from guesttracker import delta
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog, users
+from guesttracker.data import factorycampaign as fc
+from guesttracker.data.units import update_comp_smr
+from guesttracker.database import db
+from guesttracker.gui import _global as gbl
+from guesttracker.gui import tables as tbls
+from guesttracker.gui.dialogs import base as dlgs
+from guesttracker.gui.multithread import Worker
+from guesttracker.gui.update import Updater
+from guesttracker.utils import fileops as fl
+from guesttracker.utils.credentials import CredentialManager
 
 log = getlog(__name__)
 
@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
         self.statusBar().addPermanentWidget(self.minesite_label)
 
         # Settings
-        s = QSettings('sms', 'smseventlog', self)
+        s = QSettings('sms', 'guesttracker', self)
 
         screen_point = s.value('window position', False)
         screen_size = s.value('window size', False)
@@ -369,7 +369,7 @@ class MainWindow(QMainWindow):
         self._driver = driver
 
     def open_sap(self):
-        from smseventlog.utils.web import SuncorWorkRemote
+        from guesttracker.utils.web import SuncorWorkRemote
         self.sc = SuncorWorkRemote(mw=self, _driver=self.driver)
 
         Worker(func=self.sc.open_sap, mw=self) \
@@ -597,9 +597,9 @@ class MainWindow(QMainWindow):
         if not dlg.exec():
             return
 
-        from smseventlog.reports import FCReport, FleetMonthlyReport
-        from smseventlog.reports import Report as _Report
-        from smseventlog.reports import SMRReport
+        from guesttracker.reports import FCReport, FleetMonthlyReport
+        from guesttracker.reports import Report as _Report
+        from guesttracker.reports import SMRReport
         Report = {
             'Fleet Monthly': FleetMonthlyReport,
             'FC': FCReport,
@@ -629,7 +629,7 @@ class MainWindow(QMainWindow):
         t = self.active_table_widget()
         e = t.e
         if not e is None:
-            from smseventlog import eventfolders as efl
+            from guesttracker import eventfolders as efl
             unit, dateadded = e.Unit, e.DateAdded
             uf = efl.UnitFolder(unit=unit)
             p = uf.p_unit
@@ -644,7 +644,7 @@ class MainWindow(QMainWindow):
         if not lst_csv:
             return  # user didn't select anything
 
-        from smseventlog.data.internal import utils as utl
+        from guesttracker.data.internal import utils as utl
         Worker(func=utl.combine_import_csvs, mw=self, lst_csv=lst_csv, ftype='plm') \
             .add_signals(('result', dict(func=self.handle_import_result_manual))) \
             .start()
@@ -653,7 +653,7 @@ class MainWindow(QMainWindow):
 
     def create_plm_report(self):
         """Trigger plm report from current unit selected in table"""
-        from smseventlog.data.internal import plm
+        from guesttracker.data.internal import plm
 
         view = self.active_table()
         try:
@@ -727,8 +727,8 @@ class MainWindow(QMainWindow):
 
     def make_plm_report(self, e=None, **kw):
         """Actually make the report pdf"""
-        from smseventlog import eventfolders as efl
-        from smseventlog.reports import PLMUnitReport
+        from guesttracker import eventfolders as efl
+        from guesttracker.reports import PLMUnitReport
         rep = PLMUnitReport(mw=self, **kw)
 
         if not e is None:
@@ -782,7 +782,7 @@ class MainWindow(QMainWindow):
         p_pyu = cf.p_applocal.parents[1] / 'Digital Sapphire/PyUpdater/logs'
         docs.extend(_collect_logs(p_pyu))
 
-        from smseventlog.utils import email as em
+        from guesttracker.utils import email as em
 
         subject = f'Error Logs - {self.username}'
         body = 'Thanks Jayme,<br><br>I know you\'re trying your best. \
@@ -797,7 +797,7 @@ class MainWindow(QMainWindow):
         if not fl.drive_exists():
             return
 
-        from smseventlog.data.internal import dls
+        from guesttracker.data.internal import dls
 
         # get dls filepath
         lst_dls = dlgs.select_multi_folders(p_start=cf.desktop)

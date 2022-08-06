@@ -5,11 +5,11 @@ from pypika import MSSQLQuery as Query
 from pypika import Table as T
 from pypika import functions as fn
 
-from smseventlog import dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.queries import QueryBase, df_rolling_n_months
+from guesttracker import dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.queries import QueryBase, df_rolling_n_months
 
 log = getlog(__name__)
 

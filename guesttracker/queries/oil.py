@@ -7,12 +7,12 @@ from pypika import Order
 from pypika import Table as T
 from pypika.analytics import RowNumber
 
-from smseventlog import config as cf
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.queries import QueryBase
+from guesttracker import config as cf
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.queries import QueryBase
 
 log = getlog(__name__)
 
@@ -350,7 +350,7 @@ class OilReportSpindle(OilSamplesRecent):
             subquery=True)
 
     def process_df(self, df):
-        from smseventlog.data import oilsamples as oil
+        from guesttracker.data import oilsamples as oil
 
         return super().process_df(df=df) \
             .pipe(oil.flatten_test_results, keep_cols=['visc40', 'visc100']) \

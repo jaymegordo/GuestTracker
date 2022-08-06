@@ -3,10 +3,10 @@ from typing import *
 
 import six
 
+from guesttracker import functions as f
+from guesttracker import getlog, ic
+from guesttracker.config import AZURE, AZURE_WEB
 from jgutils.secrets import SecretsManager
-from smseventlog import functions as f
-from smseventlog import getlog, ic
-from smseventlog.config import AZURE, AZURE_WEB
 
 log = getlog(__name__)
 
@@ -17,7 +17,7 @@ class CredentialManager(object):
 
     Examples
     --------
-    >>> from smseventlog.utils.credentials import CredentialManager
+    >>> from guesttracker.utils.credentials import CredentialManager
         cm = CredentialManager(name='fluidlife', gui=False)
         cm.load()
     """
@@ -43,9 +43,9 @@ class CredentialManager(object):
 
         if gui:
             # if gui, will need dialogs for prompts
-            from smseventlog.gui import _global as gbl
-            from smseventlog.gui.dialogs import base as dlgs
-            from smseventlog.gui.dialogs import passwords as pw
+            from guesttracker.gui import _global as gbl
+            from guesttracker.gui.dialogs import base as dlgs
+            from guesttracker.gui.dialogs import passwords as pw
             self.dlgs = dlgs
 
             settings = gbl.get_settings()
@@ -103,7 +103,7 @@ class CredentialManager(object):
         Tuple[str, str]
             (username, password)
         """
-        from smseventlog.database import db
+        from guesttracker.database import db
         sql = f"select id, password from credentials where [name] = '{self.name}'"
         return db.cursor.execute(sql).fetchone()
 
@@ -115,7 +115,7 @@ class CredentialManager(object):
         password : str
             new password to update
         """
-        from smseventlog.database import db
+        from guesttracker.database import db
         _password = password
         password = password.replace("'", "''")
         sql = f"update credentials set [password] = '{password}' where [name] = '{self.name}'"

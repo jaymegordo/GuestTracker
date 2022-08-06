@@ -7,12 +7,12 @@ from PyQt6.QtWidgets import (
     QCheckBox, QComboBox, QDateEdit, QDateTimeEdit, QLineEdit, QListWidget,
     QRadioButton, QSizePolicy, QSlider, QSpinBox, QTextEdit, QTimeEdit)
 
-from smseventlog import dt
-from smseventlog import functions as f
-from smseventlog import getlog
+from guesttracker import dt
+from guesttracker import functions as f
+from guesttracker import getlog
 
 if TYPE_CHECKING:
-    from smseventlog.gui.dialogs.base import InputField
+    from guesttracker.gui.dialogs.base import InputField
 
 log = getlog(__name__)
 

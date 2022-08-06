@@ -5,7 +5,7 @@
     2. Make sure SMS data has been categorized front, mid, rear from eventlog
     3. run pre_process_framecracks (copies merged data to clipboard)
         - NOTE make sure d_lower set correctly for last time processed
-        >>> from smseventlog.data import framecracks as frm
+        >>> from guesttracker.data import framecracks as frm
             df = frm.pre_process_framecracks(d_lower=None)
         OR
         >>> make framecracks
@@ -19,14 +19,14 @@ import re
 import numpy as np
 import pandas as pd
 
+from guesttracker import config as cf
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.database import db
+from guesttracker.queries import FrameCracks
+from guesttracker.utils import fileops as fl
 from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.database import db
-from smseventlog.queries import FrameCracks
-from smseventlog.utils import fileops as fl
 
 log = getlog(__name__)
 

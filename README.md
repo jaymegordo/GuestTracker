@@ -7,4 +7,4 @@ The SMS Event Log is a desktop application to create a single source of truth fo
 The log is structured around several main tables, each of which can be used to input and retrieve data, as well as perform other automated tasks such as emailing tables, importing data from other sources, and creating reports.
 
 ### Docummentation
-- https://jaymegordo.github.io/SMSEventLog/
+- https://jaymegordo.github.io/guesttracker/

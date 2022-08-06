@@ -7,13 +7,13 @@ from pkg_resources import parse_version
 from pkg_resources.extern.packaging.version import Version  # type: ignore
 from pyupdater.client import Client
 
-from smseventlog import VERSION
-from smseventlog import config as cf
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.gui import _global as gbl
-from smseventlog.utils import fileops as fl
+from guesttracker import VERSION
+from guesttracker import config as cf
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.gui import _global as gbl
+from guesttracker.utils import fileops as fl
 
 warnings.simplefilter('ignore', DeprecationWarning)  # pyupdater turns this on, annoying
 log = getlog(__name__)
@@ -25,7 +25,7 @@ class ClientConfig(object):
     COMPANY_NAME = 'SMS Equipment Inc.'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3
-    UPDATE_URLS = ['https://smseventlog.s3.amazonaws.com']
+    UPDATE_URLS = ['https://guesttracker.s3.amazonaws.com']
 
 
 class Updater(object):

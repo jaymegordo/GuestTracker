@@ -29,12 +29,12 @@ if not sys.platform.startswith('win'):
 else:
     project_path = 'Y:/OneDrive/Python/SMS'
 
-sys.path.append(project_path) # so we can import from smseventlog
-from smseventlog import VERSION
-from smseventlog import config as cf
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.utils import fileops as fl
+sys.path.append(project_path) # so we can import from guesttracker
+from guesttracker import VERSION
+from guesttracker import config as cf
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.utils import fileops as fl
 
 log = getlog(__name__)
 
@@ -47,16 +47,16 @@ if procs:
         sys.exit(1)
 
 datas = [
-    ('smseventlog/_resources', '_resources'),
+    ('guesttracker/_resources', '_resources'),
     ('SQL/FactoryCampaign/ac_motor_inspections.sql', '_resources/SQL')]
 
 # WeasyPrint frozen True
 # WeasyPrint _MEIPASS True
-# WeasyPrint ROOT C:\Users\Jayme\Documents\smseventlog\dist\smseventlog_win\weasyprint
-# cairocffi root:  C:\Users\Jayme\Documents\smseventlog\dist\smseventlog_win\cairocffi
+# WeasyPrint ROOT C:\Users\Jayme\Documents\guesttracker\dist\guesttracker_win\weasyprint
+# cairocffi root:  C:\Users\Jayme\Documents\guesttracker\dist\guesttracker_win\cairocffi
 # cairosvg frozen True
 # cairosvg _MEIPASS True
-# cairosvg ROOT C:\Users\Jayme\Documents\smseventlog\dist\smseventlog_win\cairosvg
+# cairosvg ROOT C:\Users\Jayme\Documents\guesttracker\dist\guesttracker_win\cairosvg
 
 # Don't need to modify __init__.py files anymore
 package_imports = [
@@ -86,7 +86,7 @@ hiddenimports = [
 
 # seems to work without plotly hidden modules
 hidden_modules = [
-    'smseventlog.queries']
+    'guesttracker.queries']
     
 for item in hidden_modules:
     hiddenimports.extend(collect_submodules(item))
@@ -116,7 +116,7 @@ binaries = []
 if not cf.is_win:
     # binaries = [('/usr/local/bin/chromedriver', 'selenium/webdriver')]
     hookspath = [Path.home() / '.local/share/virtualenvs/SMS-4WPEHYhu/lib/python3.8/site-packages/pyupdater/hooks']
-    dist_folder_name = 'smseventlog_mac'
+    dist_folder_name = 'guesttracker_mac'
     icon_name = 'sms_icon.icns'
     name_pyu = 'mac' # pyupdater needs to keep this name the same, is changed for final upload/dist
 
@@ -134,8 +134,8 @@ else:
     # binaries.append(('C:/Program Files/GTK3-Runtime Win64/bin', 'GTK3-Runtime Win64/bin'))
 
     # not sure if this is needed, seemed to work without
-    hookspath = [Path.home() / 'AppData/Local/pypoetry/Cache/virtualenvs/smseventlog-vpjpMWts-py3.9/Lib/site-packages/pyupdater/hooks']
-    dist_folder_name = 'smseventlog_win'
+    hookspath = [Path.home() / 'AppData/Local/pypoetry/Cache/virtualenvs/guesttracker-vpjpMWts-py3.9/Lib/site-packages/pyupdater/hooks']
+    dist_folder_name = 'guesttracker_win'
     icon_name = 'sms_icon.ico'
     name_pyu = 'win'
     run_pyupdater = os.environ.get('KMP_INIT_AT_FORK', None) is None # this key doesnt exist with pyu
@@ -224,7 +224,7 @@ if not cf.is_win:
         coll,
         name=f'{name}.app',
         icon=icon,
-        bundle_identifier='com.sms.smseventlog',
+        bundle_identifier='com.sms.guesttracker',
         info_plist={
             'NSPrincipalClass': 'NSApplication',
             'NSAppleScriptEnabled': 'YES',

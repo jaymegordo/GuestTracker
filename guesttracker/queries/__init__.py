@@ -10,21 +10,21 @@ from dateutil.relativedelta import relativedelta
 from pypika import Criterion
 from pypika import Table as T
 
-from smseventlog import config as cf
-from smseventlog import date, delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.database import db
-from smseventlog.errors import SettingsError
-from smseventlog.utils import dbmodel as dbm
+from guesttracker import config as cf
+from guesttracker import date, delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.database import db
+from guesttracker.errors import SettingsError
+from guesttracker.utils import dbmodel as dbm
 
 if not cf.AZURE_WEB:
     # dont want to include seaborn in azure functions package
     from seaborn import diverging_palette
     cmap_default = diverging_palette(240, 10, sep=10, n=21, as_cmap=True)
 
-    from smseventlog.gui import _global as gbl
+    from guesttracker.gui import _global as gbl
 else:
     cmap_default = None
     gbl = None
@@ -33,26 +33,27 @@ if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
 
     # imports for type checking with qr.ExampleQuery. Annoying/manual but works
-    from smseventlog.gui.tables import TableWidget  # noqa
-    from smseventlog.queries.avail import AvailTopDowns  # noqa
-    from smseventlog.queries.avail import (  # noqa
+    from guesttracker.gui.tables import TableWidget  # noqa
+    from guesttracker.queries.avail import AvailTopDowns  # noqa
+    from guesttracker.queries.avail import (  # noqa
         Availability, AvailRawData, AvailShortfalls, AvailSummary)
-    from smseventlog.queries.comp import ComponentSMR  # noqa
-    from smseventlog.queries.comp import ComponentCO, ComponentCOReport  # noqa
-    from smseventlog.queries.el import WorkOrders  # noqa
-    from smseventlog.queries.el import TSI, EmailList  # noqa
-    from smseventlog.queries.fc import FCSummaryReport2  # noqa
-    from smseventlog.queries.fc import NewFCs  # noqa
-    from smseventlog.queries.fc import FCComplete, FCDetails  # noqa
-    from smseventlog.queries.misc import ACMotorInspections  # noqa
-    from smseventlog.queries.misc import TableKeys  # noqa
-    from smseventlog.queries.misc import TableKeysPLM  # noqa
-    from smseventlog.queries.misc import FileQuery, FrameCracks, Parts  # noqa
-    from smseventlog.queries.oil import OilSamplesReport  # noqa
-    from smseventlog.queries.oil import OilSamples, OilSamplesRecent  # noqa
-    from smseventlog.queries.plm import PLMUnit  # noqa
-    from smseventlog.queries.smr import UnitSMRReport  # noqa
-    from smseventlog.queries.smr import UnitSMR, UnitSMRMonthly  # noqa
+    from guesttracker.queries.comp import ComponentSMR  # noqa
+    from guesttracker.queries.comp import (  # noqa
+        ComponentCO, ComponentCOReport)
+    from guesttracker.queries.el import WorkOrders  # noqa
+    from guesttracker.queries.el import TSI, EmailList  # noqa
+    from guesttracker.queries.fc import FCSummaryReport2  # noqa
+    from guesttracker.queries.fc import NewFCs  # noqa
+    from guesttracker.queries.fc import FCComplete, FCDetails  # noqa
+    from guesttracker.queries.misc import ACMotorInspections  # noqa
+    from guesttracker.queries.misc import TableKeys  # noqa
+    from guesttracker.queries.misc import TableKeysPLM  # noqa
+    from guesttracker.queries.misc import FileQuery, FrameCracks, Parts  # noqa
+    from guesttracker.queries.oil import OilSamplesReport  # noqa
+    from guesttracker.queries.oil import OilSamples, OilSamplesRecent  # noqa
+    from guesttracker.queries.plm import PLMUnit  # noqa
+    from guesttracker.queries.smr import UnitSMRReport  # noqa
+    from guesttracker.queries.smr import UnitSMR, UnitSMRMonthly  # noqa
 
 
 log = getlog(__name__)
@@ -273,7 +274,7 @@ class QueryBase(metaclass=ABCMeta):
         elif not self.parent is None:
             return self.parent.minesite
         else:
-            from smseventlog.gui import _global as gbl
+            from guesttracker.gui import _global as gbl
             return gbl.get_minesite()
 
     @minesite.setter
@@ -695,4 +696,4 @@ f.import_submodule_classes(
     name=__name__,
     filename=__file__,
     gbls=globals(),
-    parent_class='smseventlog.queries')
+    parent_class='guesttracker.queries')

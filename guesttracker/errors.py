@@ -9,8 +9,8 @@ from typing import *
 import sentry_sdk
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
-from smseventlog import VERSION, getlog
-from smseventlog.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN
+from guesttracker import VERSION, getlog
+from guesttracker.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN
 
 base_log = getlog(__name__)
 
@@ -51,7 +51,7 @@ def global_exception_hook_local(*exc_info) -> None:
 def get_func_name(func, *args, **kw) -> str:
     """Get function full name from func obj
     >>> get_func_name(func)
-    'smseventlog.gui.whatever'
+    'guesttracker.gui.whatever'
     """
     if func is None:
         return
@@ -117,7 +117,7 @@ def errlog(msg=None, err=True, warn=False, display=False, default=None, status_m
                     err_msg = f'{err_msg} | {msg}'
 
                 if status_msg:
-                    from smseventlog.gui._global import update_statusbar
+                    from guesttracker.gui._global import update_statusbar
                     update_statusbar(msg)
                 elif warn:
                     log.warning(err_msg)
@@ -127,7 +127,7 @@ def errlog(msg=None, err=True, warn=False, display=False, default=None, status_m
                     log_error(msg=msg, display=display, func=func, exc_info=sys.exc_info())
 
                 if discord:
-                    from smseventlog import functions as f
+                    from guesttracker import functions as f
                     f.discord(msg=format_traceback(exc_info=sys.exc_info()), channel='err')
 
                 return default  # default obj to return
@@ -338,7 +338,7 @@ def log_error(
 
         if log is None:
             try:
-                log = getlog(inspect.getmodule(tb).__name__)  # 'smseventlog.gui.my_module'
+                log = getlog(inspect.getmodule(tb).__name__)  # 'guesttracker.gui.my_module'
             except:
                 log = base_log
                 log.warning('failed to get logger from tb')
@@ -363,7 +363,7 @@ def log_error(
         display_error(exc=exc, func_name=func_name, msg=msg, **kw)
 
     if discord:
-        from smseventlog import functions as f
+        from guesttracker import functions as f
         f.discord(msg=format_traceback(exc_info=sys.exc_info()), channel='err')
 
     if not log is None:
@@ -419,7 +419,7 @@ def display_error(
 
     tb_msg = format_traceback() if tb_msg is None else tb_msg
 
-    from smseventlog.gui.dialogs.base import show_err_msg
+    from guesttracker.gui.dialogs.base import show_err_msg
     show_err_msg(text=msg, tb_text=tb_msg)
 
 
@@ -428,11 +428,11 @@ class Error(Exception):
     """Base class for custom exceptions"""
 
     def update_statusbar(self, msg=None, **kw):
-        from smseventlog.gui._global import update_statusbar
+        from guesttracker.gui._global import update_statusbar
         update_statusbar(msg=msg, **kw)
 
     def show_warn_dialog(self, msg=None):
-        from smseventlog.gui.dialogs.base import msg_simple
+        from guesttracker.gui.dialogs.base import msg_simple
         msg_simple(msg)
 
 

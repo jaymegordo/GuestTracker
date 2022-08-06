@@ -11,4 +11,4 @@ exclude =
     pyu-data/*,
     SQL/*,
     .python_packages,
-    smseventlog/gui/__init__.py
+    guesttracker/gui/__init__.py

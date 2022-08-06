@@ -4,16 +4,16 @@ from typing import *
 
 from PyQt6.QtWidgets import QPushButton
 
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import queries as qr
-from smseventlog.database import db
-from smseventlog.gui import _global as gbl
-from smseventlog.gui.dialogs.base import InputField, InputForm, check_app
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import queries as qr
+from guesttracker.database import db
+from guesttracker.gui import _global as gbl
+from guesttracker.gui.dialogs.base import InputField, InputForm, check_app
 
 if TYPE_CHECKING:
-    from smseventlog.gui.formfields import CheckBox
+    from guesttracker.gui.formfields import CheckBox
 
 log = getlog(__name__)
 
@@ -43,7 +43,7 @@ class RefreshTable(InputForm):
 
         # initialize with proper table when called on its own for testing
         if parent is None:
-            from smseventlog.gui import tables
+            from guesttracker.gui import tables
             parent_name = getattr(tables, self.__class__.__name__, None)
             if parent_name:
                 parent = parent_name()

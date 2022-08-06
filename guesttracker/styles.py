@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 from pandas.api import types as pd_types
 
-from smseventlog import config as cf
-from smseventlog import dt, getlog
-from smseventlog.utils import xterm_color as xc
+from guesttracker import config as cf
+from guesttracker import dt, getlog
+from guesttracker.utils import xterm_color as xc
 
 if TYPE_CHECKING:
     from matplotlib.colors import LinearSegmentedColormap

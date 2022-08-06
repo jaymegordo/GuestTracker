@@ -3,14 +3,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from smseventlog import config as cf
-from smseventlog import dt
-from smseventlog import eventfolders as efl
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import queries as qr
-from smseventlog.database import db
-from smseventlog.utils import fileops as fl
+from guesttracker import config as cf
+from guesttracker import dt
+from guesttracker import eventfolders as efl
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import queries as qr
+from guesttracker.database import db
+from guesttracker.utils import fileops as fl
 
 log = getlog(__name__)
 
@@ -248,7 +248,7 @@ def find_latest_serials(df_reman, df_wo, component='AC Motor', name='ac_motor_ba
 
     Examples
     --------
-    >>> from smseventlog.data import components as cmp
+    >>> from guesttracker.data import components as cmp
     >>> df_final = cmp.find_latest_serials(df_reman, df_srb, component='Traction Alternator', name='srb_bearing')
     """
 

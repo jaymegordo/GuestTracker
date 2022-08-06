@@ -13,10 +13,10 @@ from zipfile import ZIP_DEFLATED, ZipFile
 import pandas as pd
 import psutil
 
-from smseventlog import config as cf
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog
+from guesttracker import config as cf
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog
 
 log = getlog(__name__)
 
@@ -259,7 +259,7 @@ def unzip_pyu_archive():
     """Win only, convenience func to unzip pyu archive to local dir after build"""
     p = cf.projectfolder / 'pyu-data/files'
     p = [p for p in p.glob('*zip*')][0]
-    p_dst = Path.home() / 'documents/smseventlog_pyu'
+    p_dst = Path.home() / 'documents/guesttracker_pyu'
     return unzip(p=p, p_dst=p_dst)
 
 

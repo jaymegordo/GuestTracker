@@ -2,9 +2,9 @@ import sys
 
 from PyQt6.QtCore import QObject, QRunnable, pyqtSignal, pyqtSlot
 
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog
 
 log = getlog(__name__)
 

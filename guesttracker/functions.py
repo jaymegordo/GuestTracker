@@ -15,8 +15,8 @@ from typing import *
 import numpy as np
 import pandas as pd
 
-from smseventlog import config as cf
-from smseventlog import date, delta, dt, getlog
+from guesttracker import config as cf
+from guesttracker import date, delta, dt, getlog
 
 log = getlog(__name__)
 
@@ -136,7 +136,7 @@ def convert_header(title, header, inverse_=False):
 
 
 def copy_model_attrs(model, target):
-    from smseventlog import dbtransaction as dbt
+    from guesttracker import dbtransaction as dbt
     m = dbt.model_dict(model=model, include_none=True)
     copy_dict_attrs(m=m, target=target)
 

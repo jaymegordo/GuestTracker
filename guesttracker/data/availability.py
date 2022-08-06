@@ -11,12 +11,12 @@ import pandas as pd
 import pypika as pk
 from pypika import MSSQLQuery as Query
 
+from guesttracker import config as cf
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.database import db
+from guesttracker.utils.exchange import combine_email_data
 from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.database import db
-from smseventlog.utils.exchange import combine_email_data
 
 log = getlog(__name__)
 
@@ -177,7 +177,7 @@ def ahs_pa_monthly():
 
 def weekly_dt_exclusions_update(d_rng=None):
     """create all units with MA hrs below hrs in period"""
-    from smseventlog.data.internal import utils as utl
+    from guesttracker.data.internal import utils as utl
 
     # units = []
     # units.extend(utl.all_units(rng=(300,322)))
@@ -222,7 +222,7 @@ def convert_fh_old(p=None):
 
 def calc_eng_dt():
     """Just saving some code to calc dt from specific date for specific units"""
-    from smseventlog.queries import AvailSummary
+    from guesttracker.queries import AvailSummary
     units = """
     F301
     F304

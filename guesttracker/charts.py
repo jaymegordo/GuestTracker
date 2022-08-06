@@ -5,7 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from smseventlog import config as cf
+from guesttracker import config as cf
 
 if TYPE_CHECKING:
     from plotly.graph_objs._figure import Figure

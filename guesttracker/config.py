@@ -6,8 +6,8 @@ from typing import Any, Dict
 import requests
 import yaml
 
-URL_REPO = 'https://raw.githubusercontent.com/jaymegordo/SMSEventLog/main'
-URL_CONFIG = f'{URL_REPO}/smseventlog/_resources/config.yaml'
+URL_REPO = 'https://raw.githubusercontent.com/jaymegordo/guesttracker/main'
+URL_CONFIG = f'{URL_REPO}/guesttracker/_resources/config.yaml'
 
 # Set environments
 AZURE_LOCAL = not os.getenv('AZURE_FUNCTIONS_ENVIRONMENT') is None  # dont think these are used
@@ -30,9 +30,9 @@ else:
 
 p_temp = p_applocal / 'temp'
 p_ext = p_applocal / 'extensions'
-p_topfolder = Path(__file__).parent  # smseventlog
+p_topfolder = Path(__file__).parent  # guesttracker
 p_root = p_topfolder.parent  # SMS
-p_build = Path.home() / 'Documents/smseventlog'
+p_build = Path.home() / 'Documents/guesttracker'
 desktop = Path.home() / 'Desktop'
 p_sql = p_root / 'SQL'
 
@@ -57,7 +57,7 @@ kaleido_path = str(p_kaleido)
 if SYS_FROZEN:
     p_topfolder = p_root
 
-p_res = p_topfolder / '_resources'  # data folder location is shifted out of smseventlog for frozen build
+p_res = p_topfolder / '_resources'  # data folder location is shifted out of guesttracker for frozen build
 p_sec = p_res / 'secret'
 os.environ['p_secret'] = str(p_sec)
 os.environ['p_unencrypt'] = str(p_topfolder / '_unencrypted')
@@ -66,7 +66,7 @@ p_config = p_res / 'config.yaml'
 
 # set file log path for jgutils.logger
 if not AZURE_WEB:
-    p_log = p_applocal / 'logging/smseventlog.log'
+    p_log = p_applocal / 'logging/guesttracker.log'
     if not p_log.parent.exists():
         p_log.parent.mkdir(parents=True)
 

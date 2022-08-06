@@ -19,40 +19,40 @@ from PyQt6.QtWidgets import (
 from selenium.webdriver.remote.webdriver import WebDriver
 from sqlalchemy.orm.query import Query as SQLAQuery
 
-from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import dt
-from smseventlog import errors as er
-from smseventlog import eventfolders as efl
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import queries as qr
-from smseventlog import styles as st
-from smseventlog.data import factorycampaign as fc
-from smseventlog.data.internal import dls
-from smseventlog.database import db
-from smseventlog.gui import _global as gbl
-from smseventlog.gui import formfields as ff
-from smseventlog.gui.datamodel import TableDataModel
-from smseventlog.gui.delegates import (
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import dt
+from guesttracker import errors as er
+from guesttracker import eventfolders as efl
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import queries as qr
+from guesttracker import styles as st
+from guesttracker.data import factorycampaign as fc
+from guesttracker.data.internal import dls
+from guesttracker.database import db
+from guesttracker.gui import _global as gbl
+from guesttracker.gui import formfields as ff
+from guesttracker.gui.datamodel import TableDataModel
+from guesttracker.gui.delegates import (
     CellDelegate, ComboDelegate, DateDelegate, DateTimeDelegate,
     HighlightCellDelegate, TimeDelegate)
-from smseventlog.gui.dialogs import base as dlgs
-from smseventlog.gui.dialogs import refreshtables as rtbls
-from smseventlog.gui.dialogs.addrows import (
+from guesttracker.gui.dialogs import base as dlgs
+from guesttracker.gui.dialogs import refreshtables as rtbls
+from guesttracker.gui.dialogs.addrows import (
     AddEmail, AddEvent, AddPart, AddUnit)
-from smseventlog.gui.dialogs.tables import ACInspectionsDialog, UnitSMRDialog
-from smseventlog.gui.multithread import Worker
-from smseventlog.utils import dbmodel as dbm
-from smseventlog.utils import email as em
-from smseventlog.utils import fileops as fl
-from smseventlog.utils.web import TSIWebPage
+from guesttracker.gui.dialogs.tables import ACInspectionsDialog, UnitSMRDialog
+from guesttracker.gui.multithread import Worker
+from guesttracker.utils import dbmodel as dbm
+from guesttracker.utils import email as em
+from guesttracker.utils import fileops as fl
+from guesttracker.utils.web import TSIWebPage
+from jgutils import pandas_utils as pu
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
 
-    from smseventlog.gui.gui import MainWindow, TabWidget
+    from guesttracker.gui.gui import MainWindow, TabWidget
 
 log = getlog(__name__)
 
@@ -1004,7 +1004,7 @@ class TableWidget(QWidget):
         if not self.mainwindow is None:
             return self.mainwindow.u
         else:
-            from smseventlog.users import User
+            from guesttracker.users import User
             return User.default()
 
     @property
@@ -1676,7 +1676,7 @@ class EventLogBase(TableWidget):
             return
         e = self.e_db
 
-        from smseventlog.utils.outlook import Outlook
+        from guesttracker.utils.outlook import Outlook
 
         ol = Outlook()
         wo = ol.get_wo_from_email(unit=e.Unit, title=e.Title)
@@ -2154,7 +2154,7 @@ class TSI(EventLogBase):
         if not self.check_cummins():
             return
 
-        from smseventlog.utils import web
+        from guesttracker.utils import web
         tsi = web.TSIWebPage(table_widget=self, _driver=self.driver)
 
         if not tsi.is_init:
@@ -2353,8 +2353,8 @@ class TSI(EventLogBase):
             return
 
         # create report obj and save as pdf/docx in event folder
-        from smseventlog.reports import FailureReport, PLMUnitReport
-        from smseventlog.utils.word import FailureReportWord
+        from guesttracker.reports import FailureReport, PLMUnitReport
+        from guesttracker.utils.word import FailureReportWord
         kw = {}
 
         if dlg.word_report:
@@ -3022,8 +3022,8 @@ class Availability(TableWidget):
 
     def create_report(self):
         """Show menu to select period"""
-        from smseventlog.gui.dialogs.refreshtables import AvailReport
-        from smseventlog.reports import AvailabilityReport
+        from guesttracker.gui.dialogs.refreshtables import AvailReport
+        from guesttracker.reports import AvailabilityReport
 
         dlg = AvailReport(parent=self)
         # self.dlg = dlg

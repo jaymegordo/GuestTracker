@@ -18,21 +18,21 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
+from guesttracker import config as cf
+from guesttracker import delta, dt
+from guesttracker import errors as er
+from guesttracker import eventfolders as efl
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.gui import _global as gbl
+from guesttracker.utils import fileops as fl
+from guesttracker.utils.credentials import CredentialManager
 from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import delta, dt
-from smseventlog import errors as er
-from smseventlog import eventfolders as efl
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.gui import _global as gbl
-from smseventlog.utils import fileops as fl
-from smseventlog.utils.credentials import CredentialManager
 
 if TYPE_CHECKING:
     from PyQt6.QtWidgets import QMainWindow
 
-    from smseventlog.gui.tables import TableWidget
+    from guesttracker.gui.tables import TableWidget
 
 log = getlog(__name__)
 
@@ -72,8 +72,8 @@ def any_of(*expected_conditions) -> bool:
 
 
 def tsi_form_vals():
-    from smseventlog import dbtransaction as dbt
-    from smseventlog.utils.dbmodel import EventLog
+    from guesttracker import dbtransaction as dbt
+    from guesttracker.utils.dbmodel import EventLog
 
     serial, model = 'A40035', '980E-4'
 
@@ -671,7 +671,7 @@ class Komatsu(Web):
         username_sms, password_sms = CredentialManager('sms').load()  # need sms pw for new system
 
         if username is None or username_sms is None:
-            from smseventlog.gui.dialogs import base as dlgs
+            from guesttracker.gui.dialogs import base as dlgs
             msg = 'Can\'t get TSI uesrname or password!'
             dlgs.msg_simple(msg=msg, icon='critical')
             is_init = False
@@ -875,8 +875,8 @@ class TSIWebPage(Komatsu):
 
     @classmethod
     def example(cls, uid: int = 163214677753, docs: list = None, **kw) -> 'TSIWebPage':
-        from smseventlog.dbtransaction import Row
-        from smseventlog.gui.dialogs import base as dlgs
+        from guesttracker.dbtransaction import Row
+        from guesttracker.gui.dialogs import base as dlgs
         app = dlgs.check_app()
         e = Row.example(uid=uid)
         serial, model = 'A40048', '980E-4'

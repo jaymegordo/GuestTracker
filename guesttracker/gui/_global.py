@@ -6,15 +6,15 @@ from PyQt6.QtCore import QPoint, QSettings, QSize
 from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
-from smseventlog import config as cf
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.errors import ReadOnlyError
+from guesttracker import config as cf
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.errors import ReadOnlyError
 
 if TYPE_CHECKING:
     from PyQt6.QtGui import QScreen
 
-    from smseventlog.gui.gui import MainWindow
+    from guesttracker.gui.gui import MainWindow
 
 log = getlog(__name__)
 
@@ -54,7 +54,7 @@ def get_settings() -> QSettings:
     if not mainwindow is None:
         return mainwindow.settings
     else:
-        return QSettings('sms', 'smseventlog')
+        return QSettings('sms', 'guesttracker')
 
 
 def get_setting(key: str, default: Union[str, bool] = None) -> Any:

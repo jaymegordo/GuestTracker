@@ -9,18 +9,18 @@ from PyQt6.QtWidgets import (
     QAbstractItemView, QAbstractScrollArea, QHBoxLayout, QTableWidget,
     QTableWidgetItem)
 
-from smseventlog import functions as f
-from smseventlog.database import db
-from smseventlog.gui import _global as gbl
-from smseventlog.gui import formfields as ff
-from smseventlog.gui.dialogs.base import BaseDialog, add_okay_cancel
-from smseventlog.queries.fc import FCOpen
-from smseventlog.queries.misc import ACMotorInspections
-from smseventlog.queries.misc import Parts as _Parts
-from smseventlog.queries.smr import UnitSMR
+from guesttracker import functions as f
+from guesttracker.database import db
+from guesttracker.gui import _global as gbl
+from guesttracker.gui import formfields as ff
+from guesttracker.gui.dialogs.base import BaseDialog, add_okay_cancel
+from guesttracker.queries.fc import FCOpen
+from guesttracker.queries.misc import ACMotorInspections
+from guesttracker.queries.misc import Parts as _Parts
+from guesttracker.queries.smr import UnitSMR
 
 if TYPE_CHECKING:
-    from smseventlog.queries import QueryBase
+    from guesttracker.queries import QueryBase
 
 
 class DialogTableWidget(QTableWidget):
@@ -90,7 +90,7 @@ class DialogTableWidget(QTableWidget):
         self.setVerticalHeaderLabels(list(df.index.astype(str)))
 
         # set delegate for column alignment based on dtype
-        from smseventlog.gui.delegates import TableWidgetDelegate
+        from guesttracker.gui.delegates import TableWidgetDelegate
         delegate = TableWidgetDelegate(parent=self, df=df)
         self.setItemDelegate(delegate)
 
@@ -167,7 +167,7 @@ class TableDialog(BaseDialog):
                 **kw)
         else:
             # use full TableView for filters/line highlighting etc
-            from smseventlog.gui import tables as tbls
+            from guesttracker.gui import tables as tbls
 
             if query is None:
                 raise RuntimeError('Must pass query obj if not using simple table')

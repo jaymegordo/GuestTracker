@@ -11,7 +11,7 @@ echo "version: $version, upload: $upload"
 cd .
 
 echo "building..."
-poetry run pyupdater build --log-level=WARN --app-version=$version smseventlog.spec
+poetry run pyupdater build --log-level=WARN --app-version=$version guesttracker.spec
 
 echo "packaging..."
 poetry run pyupdater pkg --process --sign

@@ -15,12 +15,12 @@ if __name__ == '__main__':
     matplotlib.use('AGG')
 
     # TODO delete this after a release or two
-    from smseventlog import config as cf
+    from guesttracker import config as cf
     if cf.is_win and cf.SYS_FROZEN:
         p = cf.p_root / 'pyarrow'
         if p.exists():
             import shutil
             shutil.rmtree(p)
 
-    from smseventlog.gui import startup
+    from guesttracker.gui import startup
     sys.exit(startup.launch())

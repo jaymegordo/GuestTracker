@@ -11,18 +11,18 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.shared import OxmlElement, qn
 from docx.shared import Cm, Inches, Pt
 
+from guesttracker import config as cf
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import reports as rp
+from guesttracker import styles as st
+from guesttracker.utils import fileops as fl
 from jgutils import fileops as jfl
-from smseventlog import config as cf
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import reports as rp
-from smseventlog import styles as st
-from smseventlog.utils import fileops as fl
 
 if TYPE_CHECKING:
     from docx.text.paragraph import Paragraph
 
-    from smseventlog.queries.plm import PLMUnit
+    from guesttracker.queries.plm import PLMUnit
 
 log = getlog(__name__)
 

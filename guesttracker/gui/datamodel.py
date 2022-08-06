@@ -7,16 +7,16 @@ import pandas as pd
 from PyQt6.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSlot
 from PyQt6.QtGui import QColor
 
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.gui import _global as gbl
-from smseventlog.utils import dbmodel as dbm
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.gui import _global as gbl
+from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
-    from smseventlog.gui.tables import TableView, TableWidget
+    from guesttracker.gui.tables import TableView, TableWidget
 
 log = getlog(__name__)
 
@@ -72,7 +72,7 @@ class TableDataModel(QAbstractTableModel):
 
     @classmethod
     def example(cls, name='EventLog'):
-        from smseventlog.gui import tables as tbls
+        from guesttracker.gui import tables as tbls
         app = gbl.get_qt_app()
         table_widget = getattr(tbls, name, tbls.EventLog)()
         query = table_widget.query

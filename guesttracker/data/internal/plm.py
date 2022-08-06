@@ -5,15 +5,15 @@ from typing import *
 import pandas as pd
 from joblib import Parallel, delayed
 
-from smseventlog import config as cf
-from smseventlog import delta, dt
-from smseventlog import eventfolders as efl
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.data.internal import utils as utl
-from smseventlog.database import db
-from smseventlog.queries.plm import PLMUnit
-from smseventlog.utils import fileops as fl
+from guesttracker import config as cf
+from guesttracker import delta, dt
+from guesttracker import eventfolders as efl
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.data.internal import utils as utl
+from guesttracker.database import db
+from guesttracker.queries.plm import PLMUnit
+from guesttracker.utils import fileops as fl
 
 log = getlog(__name__)
 

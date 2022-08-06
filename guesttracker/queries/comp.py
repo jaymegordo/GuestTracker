@@ -8,12 +8,12 @@ from pypika import Order
 from pypika import Table as T
 from pypika.analytics import RowNumber
 
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.queries import QueryBase, first_last_month
-from smseventlog.queries.el import EventLogBase
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.queries import QueryBase, first_last_month
+from guesttracker.queries.el import EventLogBase
 
 log = getlog(__name__)
 

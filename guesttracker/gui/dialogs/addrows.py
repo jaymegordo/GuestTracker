@@ -4,20 +4,20 @@ from typing import TYPE_CHECKING, Union
 from PyQt6.QtCore import QSize, Qt, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import functions as f
-from smseventlog.data import factorycampaign as fc
-from smseventlog.database import db
-from smseventlog.gui import _global as gbl
-from smseventlog.gui import formfields as ff
-from smseventlog.gui.dialogs.base import (
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import functions as f
+from guesttracker.data import factorycampaign as fc
+from guesttracker.database import db
+from guesttracker.gui import _global as gbl
+from guesttracker.gui import formfields as ff
+from guesttracker.gui.dialogs.base import (
     InputField, InputForm, add_linesep, msg_simple, unit_exists)
-from smseventlog.gui.dialogs.tables import UnitOpenFC
-from smseventlog.utils import dbmodel as dbm
+from guesttracker.gui.dialogs.tables import UnitOpenFC
+from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
-    from smseventlog.gui.tables import TableWidget
+    from guesttracker.gui.tables import TableWidget
 
 
 class AddRow(InputForm):
@@ -524,7 +524,7 @@ class AddEvent(AddRow):
                 fc.link_fc_db(unit=unit, uid=row.UID, fc_number=self.fc_number)
 
             if self.cb_eventfolder.isChecked():
-                from smseventlog import eventfolders as efl
+                from guesttracker import eventfolders as efl
                 ef = efl.EventFolder.from_model(e=row)
                 ef.create_folder(ask_show=True)
 

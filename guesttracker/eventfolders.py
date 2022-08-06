@@ -5,15 +5,15 @@ from typing import Union
 import pandas as pd
 import pypika as pk
 
+from guesttracker import config as cf
+from guesttracker import dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.database import db
+from guesttracker.dbtransaction import Row
+from guesttracker.utils import fileops as fl
+from guesttracker.utils.dbmodel import EventLog
 from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.database import db
-from smseventlog.dbtransaction import Row
-from smseventlog.utils import fileops as fl
-from smseventlog.utils.dbmodel import EventLog
 
 log = getlog(__name__)
 
@@ -99,7 +99,7 @@ class UnitFolder(object):
             open downloads folder, by default False
         """
         if not self.check():
-            from smseventlog.gui import _global as gbl
+            from guesttracker.gui import _global as gbl
 
             msg = f'Unit folder not found, creating: {self.p_unit}'
             gbl.update_statusbar(msg=msg, warn=True)
@@ -206,11 +206,11 @@ class EventFolder(UnitFolder):
 
     @classmethod
     def example(cls, uid=108085410910, e=None):
-        from smseventlog.gui import _global as gbl
+        from guesttracker.gui import _global as gbl
         app = gbl.get_qt_app()
 
         if e is None:
-            from smseventlog import dbtransaction as dbt
+            from guesttracker import dbtransaction as dbt
             e = dbt.Row.example(uid=uid)
 
         return cls.from_model(e=e)
@@ -294,7 +294,7 @@ class EventFolder(UnitFolder):
         bool
             True if folder exists or replace was successful.
         """
-        from smseventlog.gui.dialogs import base as dlgs
+        from guesttracker.gui.dialogs import base as dlgs
         if not fl.drive_exists(**kw):
             return
 
@@ -360,7 +360,7 @@ class EventFolder(UnitFolder):
             print(f'num pics updated in db: {num_pics}')
 
     def create_folder(self, show=True, ask_show=False):
-        from smseventlog.gui.dialogs import base as dlgs
+        from guesttracker.gui.dialogs import base as dlgs
         fl.drive_exists()
 
         try:
@@ -411,7 +411,7 @@ def get_fc_folders(fc_number='19H086-1', minesite='FortHills', units=None, compl
     [type]
         [description]
     """
-    from smseventlog import queries as qr
+    from guesttracker import queries as qr
     query = qr.FCDetails()
 
     args = [

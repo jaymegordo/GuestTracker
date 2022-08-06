@@ -3,11 +3,11 @@ from typing import *
 
 import pandas as pd
 
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.data.internal import utils as utl
-from smseventlog.database import db
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.data.internal import utils as utl
+from guesttracker.database import db
 
 log = getlog(__name__)
 

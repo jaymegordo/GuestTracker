@@ -8,13 +8,13 @@ from pypika import MSSQLQuery as Query
 from pypika import Table as T
 from pypika import functions as fn
 
-from smseventlog import delta, dt
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.database import db
-from smseventlog.errors import ExpectedError
-from smseventlog.queries import QueryBase
+from guesttracker import delta, dt
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.database import db
+from guesttracker.errors import ExpectedError
+from guesttracker.queries import QueryBase
 
 log = getlog(__name__)
 

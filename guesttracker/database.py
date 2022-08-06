@@ -15,13 +15,13 @@ from sqlalchemy.engine.base import Connection  # just to wrap errors
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool.base import Pool
 
+from guesttracker import config as cf
+from guesttracker import delta, dt
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog
 from jgutils import pandas_utils as pu
 from jgutils.secrets import SecretsManager
-from smseventlog import config as cf
-from smseventlog import delta, dt
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog
 
 log = getlog(__name__)
 
@@ -32,7 +32,7 @@ log = getlog(__name__)
 
 #  (sqlalchemy.exc.InvalidRequestError) Can't reconnect until invalid transaction is rolled back - setModelData
 
-#   File "C:\Users\Jayme\AppData\Local\pypoetry\Cache\virtualenvs\smseventlog-vpjpMWts-py3.
+#   File "C:\Users\Jayme\AppData\Local\pypoetry\Cache\virtualenvs\guesttracker-vpjpMWts-py3.
 # 9\lib\site-packages\sqlalchemy\engine\default.py", line 717, in do_execute
 #     cursor.execute(statement, parameters)
 # sqlalchemy.exc.OperationalError: (pyodbc.OperationalError) ('08S01', '[08S01] [Microsoft][ODBC Driver 17
@@ -83,7 +83,7 @@ def get_db_creds() -> Dict[str, str]:
         return m
     else:
         # raise error to user
-        from smseventlog.gui.dialogs.base import msg_simple
+        from guesttracker.gui.dialogs.base import msg_simple
         msg = 'No database drivers available, please download "ODBC Driver 17 for SQL Server" (or newer) from:\n\n \
         https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15'
         msg_simple(icon='critical', msg=msg)
@@ -212,7 +212,7 @@ class DB(object):
 
     def clear_saved_tables(self):
         # reset dfs so they are forced to reload from the db
-        from smseventlog.gui._global import update_statusbar
+        from guesttracker.gui._global import update_statusbar
         self.dfs = {}
         update_statusbar('Saved database tables cleared.')
 
@@ -576,7 +576,7 @@ class DB(object):
         df = self.get_df_saved(name)
 
         if df is None or force:
-            from smseventlog.queries import EmailList
+            from guesttracker.queries import EmailList
             query = EmailList()
             df = query.get_df()
             self.save_df(df, name)
@@ -643,7 +643,7 @@ class DB(object):
         df = self.get_df_saved(name)
 
         if df is None or force:
-            from smseventlog.queries.misc import Parts
+            from guesttracker.queries.misc import Parts
             query = Parts()
             df = query.get_df()
             self.save_df(df, name)
@@ -726,7 +726,7 @@ class DB(object):
         df = self.get_df_saved(name)
 
         if df is None:
-            from smseventlog.queries import FCOpen
+            from guesttracker.queries import FCOpen
             df = FCOpen().get_df(default=False)
             self.save_df(df, name)
 
@@ -745,7 +745,7 @@ class DB(object):
         return df
 
     def set_df_fc(self):
-        from smseventlog.queries import FCOpen
+        from guesttracker.queries import FCOpen
         self.df_fc = FCOpen().get_df(default=False)
 
     def combine_comp_modifier(self, df, cols: list, target: str = 'combined', sep: str = ', '):
@@ -895,7 +895,7 @@ class DB(object):
             kw['if_exists'] = 'replace'
 
         if join_cols is None:
-            from smseventlog import dbtransaction as dbt
+            from guesttracker import dbtransaction as dbt
             join_cols = dbt.get_dbtable_keys(dbtable=a)
 
         imptable = b

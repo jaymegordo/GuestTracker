@@ -11,14 +11,14 @@ from PyQt6.QtWidgets import (
     QStyleOptionComboBox, QStyleOptionFocusRect, QStyleOptionViewItem,
     QTextEdit, QTimeEdit)
 
-from smseventlog import dt
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog.database import db
-from smseventlog.gui import _global as gbl
-from smseventlog.gui.datamodel import TableDataModel
-from smseventlog.gui.formfields import ComboBoxTable
+from guesttracker import dt
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker.database import db
+from guesttracker.gui import _global as gbl
+from guesttracker.gui.datamodel import TableDataModel
+from guesttracker.gui.formfields import ComboBoxTable
 
 if TYPE_CHECKING:
     from PyQt6.QtCore import QModelIndex

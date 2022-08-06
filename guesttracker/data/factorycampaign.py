@@ -6,17 +6,17 @@ from typing import *
 
 import pandas as pd
 
+from guesttracker import config as cf
+from guesttracker import dbtransaction as dbt
+from guesttracker import dt
+from guesttracker import errors as er
+from guesttracker import functions as f
+from guesttracker import getlog
+from guesttracker import styles as st
+from guesttracker.database import db
+from guesttracker.gui.dialogs import base as dlgs
+from guesttracker.utils import dbmodel as dbm
 from jgutils import pandas_utils as pu
-from smseventlog import config as cf
-from smseventlog import dbtransaction as dbt
-from smseventlog import dt
-from smseventlog import errors as er
-from smseventlog import functions as f
-from smseventlog import getlog
-from smseventlog import styles as st
-from smseventlog.database import db
-from smseventlog.gui.dialogs import base as dlgs
-from smseventlog.utils import dbmodel as dbm
 
 log = getlog(__name__)
 
@@ -309,8 +309,8 @@ def update_scheduled_db(df, **kw):
     df : pd.DataFrame
         cleaned df
     """
-    from smseventlog import dbtransaction as dbt
-    from smseventlog.utils.dbmodel import FactoryCampaign
+    from guesttracker import dbtransaction as dbt
+    from guesttracker.utils.dbmodel import FactoryCampaign
 
     dbt.DBTransaction(dbtable=FactoryCampaign, table_view=False, **kw) \
         .add_df(df=df, update_cols='Scheduled') \
