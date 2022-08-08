@@ -220,7 +220,8 @@ class QueryBase(metaclass=ABCMeta):
             da: dict = None,
             theme: str = 'light',
             select_tablename: str = None,
-            use_cached_df: bool = False):
+            use_cached_df: bool = False,
+            title: Union[str, None] = None):
 
         self.parent = parent
         self.minesite = minesite
@@ -242,10 +243,11 @@ class QueryBase(metaclass=ABCMeta):
         self.query_key = f'queries/{self.name.lower()}'  # saving last_query
 
         # loop base classes to get first working title, need this to map view_cols
-        for base_class in inspect.getmro(self.__class__):
-            title = m['Class'].get(base_class.__name__, None)
-            if not title is None:
-                break
+        if title is None:
+            for base_class in inspect.getmro(self.__class__):
+                title = m['Class'].get(base_class.__name__, None)
+                if not title is None:
+                    break
 
         # loop through base classes till we find a working select_table
         if select_tablename is None:

@@ -4,9 +4,10 @@ import subprocess
 from guesttracker import database as dtb
 from guesttracker import delta, dt, getlog
 from guesttracker import queries as qr
-from guesttracker.data import framecracks as frm
-from guesttracker.queries.misc import ACMotorInspections
-from guesttracker.reports import SMRReport
+
+# from guesttracker.data import framecracks as frm
+# from guesttracker.queries.misc import ACMotorInspections
+# from guesttracker.reports import SMRReport
 
 if True:
     from jgutils.secrets import SecretsManager
@@ -71,15 +72,6 @@ if __name__ == '__main__':
 
     elif a.encrypt_creds:
         SecretsManager().encrypt_all_secrets()
-
-    elif a.ac_inspect:
-        ACMotorInspections().show_required_notifications()
-
-    elif a.smr:
-        rep = SMRReport().create_pdf()
-
-    elif a.framecracks:
-        df = frm.pre_process_framecracks(d_lower=a.framecracks)
 
     elif a.update_exch_pw:
         from guesttracker.utils.credentials import CredentialManager

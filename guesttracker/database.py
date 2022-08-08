@@ -154,7 +154,7 @@ def e(func):
 
 class DB(object):
     def __init__(self):
-        __name__ = 'SMS Event Log Database'
+        __name__ = 'HBA Guest Tracker Database'
         log.info('Initializing database')
         self.reset(False)
 
@@ -266,7 +266,7 @@ class DB(object):
                 fail_msg = f'Failed db func: {func}\n\targs: {args}, kw: {kw}\n\troot error: {str(e)}'
                 raise er.SMSDatabaseError(fail_msg) from e
 
-    def safe_execute(self, sql: str) -> None:
+    def safe_execute(self, sql: str, **kw) -> None:
         """Convenience wrapper for session.execute
 
         Parameters
@@ -274,7 +274,7 @@ class DB(object):
         sql : str
             query to execute
         """
-        self.safe_func(self.session.execute, sql)
+        self.safe_func(self.session.execute, sql, **kw)
 
     def safe_commit(self, fail_msg: str = None) -> bool:
         """Commit transaction to db and rollback if fail

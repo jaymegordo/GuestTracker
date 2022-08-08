@@ -8,7 +8,8 @@ from guesttracker import errors as er
 from guesttracker import getlog
 from guesttracker.database import db, get_odbc_driver
 from guesttracker.gui import _global as gbl
-from guesttracker.utils.dbmodel import UserSettings
+
+# from guesttracker.utils.dbmodel import UserSettings
 
 log = getlog(__name__)
 
@@ -17,7 +18,7 @@ class User():
     def __init__(self, username: str, mainwindow=None):
         self.row, self._e = None, None
         self.username = username
-        self.dbtable = UserSettings
+        # self.dbtable = UserSettings  # TODO maybe need
         self.domain = os.getenv('userdomain', None)
         # domain = 'CED'
         self.usergroup = db.domain_map_inv.get(self.domain, 'SMS')

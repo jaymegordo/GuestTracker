@@ -21,7 +21,7 @@ log = getlog(__name__)
 
 class ClientConfig(object):
     PUBLIC_KEY = 'Rbk396oV6YSKhJtYTZHGdu/z7P/Gom11LdqI/w3AlyQ'
-    APP_NAME = 'SMS Event Log'
+    APP_NAME = 'HBA Guest Tracker'
     COMPANY_NAME = 'SMS Equipment Inc.'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3

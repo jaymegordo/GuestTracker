@@ -6,11 +6,12 @@ import traceback
 import types
 from typing import *
 
-import sentry_sdk
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
-
-from guesttracker import VERSION, getlog
+from guesttracker import getlog
 from guesttracker.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN
+
+# import sentry_sdk
+# from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
 
 base_log = getlog(__name__)
 
@@ -144,14 +145,14 @@ def sentry_before_send(event, hint):
     return event
 
 
-@errlog('Failed to init Sentry')
-def init_sentry():
-    sentry_sdk.init(
-        auto_enabling_integrations=False,
-        dsn='https://66c22032a41b453eac4e0aac4fb03f82@o436320.ingest.sentry.io/5397255',
-        integrations=[SqlalchemyIntegration()],
-        release=f'sms-event-log@{VERSION}')
-    # before_send=sentry_before_send)
+# @errlog('Failed to init Sentry')
+# def init_sentry():
+#     sentry_sdk.init(
+#         auto_enabling_integrations=False,
+#         dsn='https://66c22032a41b453eac4e0aac4fb03f82@o436320.ingest.sentry.io/5397255',
+#         integrations=[SqlalchemyIntegration()],
+#         release=f'sms-event-log@{VERSION}')
+#     # before_send=sentry_before_send)
 
 
 def test_wrapper(func):
@@ -565,7 +566,7 @@ class FolderExistsError(ExpectedError):
 sys._excepthook = sys.excepthook  # save original excepthook
 
 if IS_QT_APP or AZURE_WEB:
-    init_sentry()  # sentry overrides excepthook, need to init first to override it
+    # init_sentry()  # sentry overrides excepthook, need to init first to override it
     sys.sentry_excepthook = sys.excepthook  # call events back to sentry if we want
     sys.excepthook = global_exception_hook  # assign custom excepthook
 else:

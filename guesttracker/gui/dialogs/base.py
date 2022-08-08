@@ -107,7 +107,7 @@ class InputField():
 class BaseDialog(QDialog):
     """Base dialog"""
 
-    def __init__(self, parent=None, window_title='SMS Event Log'):
+    def __init__(self, parent=None, window_title='HBA Guest Tracker'):
         super().__init__(parent=parent)
         self.setWindowTitle(window_title)
         self.parent = parent
@@ -487,7 +487,7 @@ class InputUserName(InputForm):
     def __init__(self, parent=None):
         super().__init__(parent=parent, window_title='Enter User Name', enforce_all=True)
         layout = self.v_layout
-        layout.insertWidget(0, QLabel('Welcome to the SMS Event Log! \
+        layout.insertWidget(0, QLabel('Welcome to the HBA Guest Tracker! \
             \nPlease enter your first/last name and work email to begin:\n'))
 
         self.add_input(field=InputField(text='First'))
@@ -1757,7 +1757,7 @@ def about():
         'User Group': u.usergroup,
         'Install Directory': str(cf.p_root)}
 
-    msg = f'SMS Event Log\n\n{f.pretty_dict(m)}'
+    msg = f'HBA Guest Tracker\n\n{f.pretty_dict(m)}'
     return msg_simple(msg=msg)
 
 

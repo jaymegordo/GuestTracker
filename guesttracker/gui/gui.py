@@ -8,24 +8,20 @@ from PyQt6.QtGui import QAction, QColor, QKeySequence, QPalette
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QMainWindow, QMenu, QTableWidget, QTabWidget,
     QWidget)
-from selenium.webdriver.remote.webdriver import WebDriver
-from sentry_sdk import configure_scope
 
 from guesttracker import config as cf
 from guesttracker import delta
 from guesttracker import errors as er
 from guesttracker import functions as f
 from guesttracker import getlog, users
-from guesttracker.data import factorycampaign as fc
-from guesttracker.data.units import update_comp_smr
 from guesttracker.database import db
 from guesttracker.gui import _global as gbl
 from guesttracker.gui import tables as tbls
 from guesttracker.gui.dialogs import base as dlgs
 from guesttracker.gui.multithread import Worker
-from guesttracker.gui.update import Updater
 from guesttracker.utils import fileops as fl
-from guesttracker.utils.credentials import CredentialManager
+
+# from guesttracker.utils.credentials import CredentialManager
 
 log = getlog(__name__)
 
@@ -39,15 +35,15 @@ class MainWindow(QMainWindow):
         self.app = QApplication.instance()
         self.setWindowTitle(gbl.title)
         self.setMinimumSize(QSize(1000, 400))
-        self.minesite_changed.connect(self.update_minesite_label)
-        self.minesite_label = QLabel(self)  # permanent label for status bar so it isnt changed by statusTips
-        self.minesite_label.setToolTip('Global MineSite > Set with [Ctrl + Shift + M]')
+        # self.minesite_changed.connect(self.update_minesite_label)
+        # self.minesite_label = QLabel(self)  # permanent label for status bar so it isnt changed by statusTips
+        # self.minesite_label.setToolTip('Global MineSite > Set with [Ctrl + Shift + M]')
         self.rows_label = QLabel(self)
         self.statusBar().addPermanentWidget(self.rows_label)
-        self.statusBar().addPermanentWidget(self.minesite_label)
+        # self.statusBar().addPermanentWidget(self.minesite_label)
 
         # Settings
-        s = QSettings('sms', 'guesttracker', self)
+        s = QSettings('hba', 'guesttracker', self)
 
         screen_point = s.value('window position', False)
         screen_size = s.value('window size', False)
@@ -72,27 +68,27 @@ class MainWindow(QMainWindow):
 
         self.tabs = TabWidget(self)
         self.setCentralWidget(self.tabs)
-        self.update_minesite_label()
+        # self.update_minesite_label()
 
         self.threadpool = QThreadPool(self)
         log.debug('Mainwindow init finished.')
 
-    @property
-    def minesite(self) -> str:
-        """Global minesite setting"""
-        return self.settings.value('minesite', defaultValue='FortHills')
-        # return self._minesite
+    # @property
+    # def minesite(self) -> str:
+    #     """Global minesite setting"""
+    #     return self.settings.value('minesite', defaultValue='FortHills')
+    #     # return self._minesite
 
-    @minesite.setter
-    def minesite(self, val: Any) -> None:
-        """Save minesite back to settings"""
-        # self._minesite = val
-        self.settings.setValue('minesite', val)
-        self.minesite_changed.emit(val)
+    # @minesite.setter
+    # def minesite(self, val: Any) -> None:
+    #     """Save minesite back to settings"""
+    #     # self._minesite = val
+    #     self.settings.setValue('minesite', val)
+    #     self.minesite_changed.emit(val)
 
-    def update_minesite_label(self, *args):
-        """minesite_label is special label to always show current minesite (bottom right)"""
-        self.minesite_label.setText(f'Minesite: {self.minesite}')
+    # def update_minesite_label(self, *args):
+    #     """minesite_label is special label to always show current minesite (bottom right)"""
+    #     self.minesite_label.setText(f'Minesite: {self.minesite}')
 
     def update_rows_label(self, *args):
         view = self.active_table()
@@ -163,11 +159,12 @@ class MainWindow(QMainWindow):
         """Steps to run before MainWindow is shown.
         - Everything in here must suppress errors and continue
         """
-        self.username = self.get_username()
-        self.init_sentry()
+        # self.username = self.get_username()
+        # self.init_sentry()
 
-        self.u = users.User(username=self.username, mainwindow=self).login()
-        log.debug('user init')
+        # self.u = users.User(username=self.username, mainwindow=self).login()
+        self.u = None
+        # log.debug('user init')
 
         last_tab_name = self.settings.value('active table', 'Event Log')
         self.tabs.init_tabs()
@@ -175,17 +172,18 @@ class MainWindow(QMainWindow):
         log.debug('last tab activated')
 
         # initialize updater
-        self.updater = Updater(mw=self, dev_channel=self.get_setting('dev_channel'))
-        log.debug(f'updater initialized, channel={self.updater.channel}')
+        # self.updater = Updater(mw=self, dev_channel=self.get_setting('dev_channel'))
+        # log.debug(f'updater initialized, channel={self.updater.channel}')
 
         t = self.active_table_widget()
+        # TODO turn this back on
         if t.refresh_on_init:
             t.refresh(default=True, save_query=False)
             log.debug('last table refreshed')
 
         # startup update checks can allow ignoring dismissed versions
-        self.check_update(allow_dismissed=True)
-        self.start_update_timer()
+        # self.check_update(allow_dismissed=True)
+        # self.start_update_timer()
         log.debug('Finished after_init')
 
     def start_update_timer(self, mins: int = 180) -> None:
@@ -199,75 +197,75 @@ class MainWindow(QMainWindow):
         self.update_timer.timeout.connect(self.check_update)
         self.update_timer.start(msec)
 
-    @er.errlog('Failed to check for update!', display=True)
-    def check_update(self, allow_dismissed: bool = False, *args):
-        """Check for update and download in a worker thread
-        """
-        if not cf.SYS_FROZEN:
-            self.update_statusbar('App not frozen, not checking for updates.')
-            return
+    # @er.errlog('Failed to check for update!', display=True)
+    # def check_update(self, allow_dismissed: bool = False, *args):
+    #     """Check for update and download in a worker thread
+    #     """
+    #     if not cf.SYS_FROZEN:
+    #         self.update_statusbar('App not frozen, not checking for updates.')
+    #         return
 
-        if self.updater.update_available:
-            # update has been previously checked and downloaded but user declined to install initially
-            self._install_update(updater=self.updater, allow_dismissed=allow_dismissed)
-        else:
-            Worker(func=self.updater.check_update, mw=self) \
-                .add_signals(signals=(
-                    'result',
-                    dict(func=lambda updater: self._install_update(updater, allow_dismissed=allow_dismissed)))) \
-                .start()
+    #     if self.updater.update_available:
+    #         # update has been previously checked and downloaded but user declined to install initially
+    #         self._install_update(updater=self.updater, allow_dismissed=allow_dismissed)
+    #     else:
+    #         Worker(func=self.updater.check_update, mw=self) \
+    #             .add_signals(signals=(
+    #                 'result',
+    #                 dict(func=lambda updater: self._install_update(updater, allow_dismissed=allow_dismissed)))) \
+    #             .start()
 
-    def _install_update(
-            self,
-            updater: Updater = None,
-            ask_user: bool = True,
-            allow_dismissed: bool = False) -> None:
-        """Ask if user wants to update and show changelog
+    # def _install_update(
+    #         self,
+    #         updater: Updater = None,
+    #         ask_user: bool = True,
+    #         allow_dismissed: bool = False) -> None:
+    #     """Ask if user wants to update and show changelog
 
-        Parameters
-        ----------
-        updater : Updater, optional
-            Updater obj, default None
-        ask_user : bool, optional
-            prompt user to update or just install, default True
-        allow_dismissed : bool, optional
-            allow ignoring patch updates if user has dismissed once
-        """
+    #     Parameters
+    #     ----------
+    #     updater : Updater, optional
+    #         Updater obj, default None
+    #     ask_user : bool, optional
+    #         prompt user to update or just install, default True
+    #     allow_dismissed : bool, optional
+    #         allow ignoring patch updates if user has dismissed once
+    #     """
 
-        # update check failed, None result from thread
-        if updater is None:
-            return
+    #     # update check failed, None result from thread
+    #     if updater is None:
+    #         return
 
-        v_current = updater.version
-        v_latest = updater.ver_latest
+    #     v_current = updater.version
+    #     v_latest = updater.ver_latest
 
-        # check if PATCH update has been dismissed
-        if not updater.needs_update and allow_dismissed:
-            log.info('User declined current update. current:'
-                     + f'{v_latest}, dismissed: {updater.ver_dismissed}')
-            return
+    #     # check if PATCH update has been dismissed
+    #     if not updater.needs_update and allow_dismissed:
+    #         log.info('User declined current update. current:'
+    #                  + f'{v_latest}, dismissed: {updater.ver_dismissed}')
+    #         return
 
-        # show changelog between current installed and latest version
-        markdown_msg = updater.get_changelog_new()
+    #     # show changelog between current installed and latest version
+    #     markdown_msg = updater.get_changelog_new()
 
-        # prompt user to install update and restart
-        msg = 'An updated version of the Event Log is available.\n\n' \
-            + f'Current: {v_current}\n' \
-            + f'Latest: {v_latest}\n\n' \
-            + 'Would you like to restart and update now?' \
-            + '\n\nNOTE - Patch updates (eg x.x.1) can be dismissed. Use Help > Check for Update ' \
-            + 'to prompt again.'
+    #     # prompt user to install update and restart
+    #     msg = 'An updated version of the Event Log is available.\n\n' \
+    #         + f'Current: {v_current}\n' \
+    #         + f'Latest: {v_latest}\n\n' \
+    #         + 'Would you like to restart and update now?' \
+    #         + '\n\nNOTE - Patch updates (eg x.x.1) can be dismissed. Use Help > Check for Update ' \
+    #         + 'to prompt again.'
 
-        if ask_user:
-            if not dlgs.msgbox(msg=msg, yesno=True, markdown_msg=markdown_msg):
+    #     if ask_user:
+    #         if not dlgs.msgbox(msg=msg, yesno=True, markdown_msg=markdown_msg):
 
-                # mark version as dismissed
-                self.settings.setValue('ver_dismissed', str(v_latest))
-                self.update_statusbar(f'User dismissed update version: {v_latest}', log_=True)
-                return
+    #             # mark version as dismissed
+    #             self.settings.setValue('ver_dismissed', str(v_latest))
+    #             self.update_statusbar(f'User dismissed update version: {v_latest}', log_=True)
+    #             return
 
-        Worker(func=updater.install_update, mw=self).start()
-        self.update_statusbar('Extracting update and restarting...')
+    #     Worker(func=updater.install_update, mw=self).start()
+    #     self.update_statusbar('Extracting update and restarting...')
 
     def show_full_changelog(self) -> None:
         """Show full changelog"""
@@ -323,10 +321,12 @@ class MainWindow(QMainWindow):
             rect = screen.geometry()
             log.warning(f'screen geom: {rect}')
 
-        s.setValue('minesite', self.minesite)
+        # s.setValue('minesite', self.minesite)
+        # TODO turn back on
         s.setValue('active table', self.active_table_widget().title)
 
         # save current TableView column state
+        # TODO turn back on
         self.tv.save_header_state()
 
     def get_setting(self, key: str, default: Any = None) -> Any:
@@ -358,33 +358,6 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'u'):
             self.u.username = dlg.username
             self.u.email = dlg.email
-
-    @property
-    def driver(self) -> Union[WebDriver, None]:
-        """Save global Chrome WebDriver to reuse etc for TSI or SAP"""
-        return self._driver if hasattr(self, '_driver') else None
-
-    @driver.setter
-    def driver(self, driver: WebDriver):
-        self._driver = driver
-
-    def open_sap(self):
-        from guesttracker.utils.web import SuncorWorkRemote
-        self.sc = SuncorWorkRemote(mw=self, _driver=self.driver)
-
-        Worker(func=self.sc.open_sap, mw=self) \
-            .add_signals(signals=('result', dict(func=self.handle_sap_result))) \
-            .start()
-        self.update_statusbar('Opening SAP...')
-
-    def handle_sap_result(self, sc=None):
-        """just need to keep a referece to the driver in main thread so chrome doesnt close"""
-        if sc is None:
-            log.warning('SAP not opened properly')
-            return
-
-        self.driver = sc.driver
-        self.update_statusbar('SAP started.', success=True)
 
     def get_menu(self, name: Union[str, 'QMenu']) -> 'QMenu':
         """Get QMenu if exists or create
@@ -491,15 +464,16 @@ class MainWindow(QMainWindow):
                 refresh_all_open=dict(func=lambda: t().refresh_allopen(default=True), shortcut='Ctrl+Shift+R'),
                 reload_last_query=dict(func=lambda: t().refresh(last_query=True), shortcut='Ctrl+Shift+L'),
                 previous_tab=dict(sep=True, func=lambda: self.tabs.activate_previous(), shortcut='Meta+Tab'),
-                change_minesite=dict(func=self.show_changeminesite, shortcut='Ctrl+Shift+M'),
-                view_folder=dict(func=lambda: t().view_folder(), shortcut='Ctrl+Shift+V'),
+                # change_minesite=dict(func=self.show_changeminesite, shortcut='Ctrl+Shift+M'),
+                # view_folder=dict(func=lambda: t().view_folder(), shortcut='Ctrl+Shift+V'),
                 submenu_reports=dict(
                     fleet_monthly_report=lambda: self.create_monthly_report('Fleet Monthly'),
-                    FC_report=lambda: self.create_monthly_report('FC'),
-                    SMR_report=lambda: self.create_monthly_report('SMR'),
-                    PLM_report=dict(sep=True, func=self.create_plm_report),
-                    import_PLM_manual=self.import_plm_manual),
-                import_downloads=dict(sep=True, func=self.import_downloads),
+                    # FC_report=lambda: self.create_monthly_report('FC'),
+                    # SMR_report=lambda: self.create_monthly_report('SMR'),
+                    # PLM_report=dict(sep=True, func=self.create_plm_report),
+                    # import_PLM_manual=self.import_plm_manual
+                ),
+                # import_downloads=dict(sep=True, func=self.import_downloads),
                 preferences=dict(sep=True, func=self.show_preferences, shortcut='Ctrl+,')),
             edit=dict(
                 find=dict(func=lambda: tv().show_search(), shortcut='Ctrl+F')),
@@ -517,18 +491,19 @@ class MainWindow(QMainWindow):
                 update_component=lambda: t().show_component(),
                 details_view=dict(func=lambda: t().show_details(), shortcut='Ctrl+Shift+D')),
             database=dict(
-                update_component_SMR=update_comp_smr,
-                update_FC_status_clipboard=lambda: fc.update_scheduled_sap(
-                    exclude=dlgs.inputbox(
-                        msg='1. Enter FCs to exclude\n2. Copy FC Data from SAP to clipboard\n\nExclude:',
-                        title='Update Scheduled FCs SAP'),
-                    table_widget=t()),
+                # update_component_SMR=update_comp_smr,
+                # update_FC_status_clipboard=lambda: fc.update_scheduled_sap(
+                #     exclude=dlgs.inputbox(
+                #         msg='1. Enter FCs to exclude\n2. Copy FC Data from SAP to clipboard\n\nExclude:',
+                #         title='Update Scheduled FCs SAP'),
+                #     table_widget=t()),
                 reset_database_connection=dict(sep=True, func=db.reset),
                 reset_database_tables=db.clear_saved_tables,
-                open_SAP=dict(sep=True, func=self.open_sap)),
+                # open_SAP=dict(sep=True, func=self.open_sap)
+            ),
             help=dict(
                 about=dlgs.about,
-                check_for_update=self.check_update,
+                # check_for_update=self.check_update,
                 show_changelog=self.show_full_changelog,
                 email_error_logs=self.email_err_logs,
                 open_documentation=lambda: f.open_url(cf.config['url']['docs']),
@@ -539,8 +514,8 @@ class MainWindow(QMainWindow):
                 test_error=self.test_error))
 
         # reset credentials prompts
-        for c in ('TSI', 'SMS', 'exchange', 'SAP'):
-            menu_actions['help'][f'reset_{c}_credentials'] = lambda x, c=c: CredentialManager(c).prompt_credentials()
+        # for c in ('TSI', 'SMS', 'exchange', 'SAP'):
+        #     menu_actions['help'][f'reset_{c}_credentials'] = lambda x, c=c: CredentialManager(c).prompt_credentials()
 
         for menu, m_act in menu_actions.items():
             self.add_actions(actions=m_act, menu=menu)
@@ -863,9 +838,8 @@ class TabWidget(QTabWidget):
     @staticmethod
     def available_tabs(user: Union[users.User, None]) -> List[str]:
         """Return list of available tabs based on user"""
-        lst = ['EventLog', 'WorkOrders', 'TSI', 'ComponentCO', 'ComponentSMR',
-               'UnitInfo', 'FCSummary', 'FCDetails', 'EmailList', 'Parts', 'Availability', 'OilSamples',
-               'UserSettings']
+        lst = list(cf.config['Headers'].keys())  # default use all named tables
+        exclude = []
 
         if not user is None:
             # Hide specific tabs per usergroup/domain
@@ -905,7 +879,7 @@ class TabWidget(QTabWidget):
         if title in self.tabindex:
             return  # tab already init
 
-        table_widget = getattr(tbls, name)(parent=self)
+        table_widget = getattr(tbls, name, tbls.HBATableWidget)(parent=self, name=name)
         self.insertTab(i, table_widget, title)
         self.tabindex[title] = i
 

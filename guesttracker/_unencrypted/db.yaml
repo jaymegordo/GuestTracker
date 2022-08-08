@@ -1,5 +1,5 @@
-database: db1
-driver: '{ODBC Driver 17 for SQL Server}'
+database: guesttracker
+driver: '{ODBC Driver 18 for SQL Server}'
 pwd: Z%^7wdpf%Nai=^ZFy-U.
-server: tcp:jgazure1.database.windows.net,1433
-uid: jgordon@jgazure1
+server: tcp:jgazure2.database.windows.net,1433
+uid: jgordon@jgazure2

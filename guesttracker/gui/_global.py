@@ -22,7 +22,7 @@ log = getlog(__name__)
 # NOTE need to either move this out of .gui, or move .gui.__init__ imports somewhere else
 
 global title, minsize, minsize_ss, minesite, customer
-title = 'SMS Event Log'
+title = 'HBA Guest Tracker'
 minsize = QSize(200, 100)
 minsize_ss = 'QLabel{min-width: 100px}'
 minesite_default, customer = 'FortHills', 'Suncor'
@@ -54,7 +54,7 @@ def get_settings() -> QSettings:
     if not mainwindow is None:
         return mainwindow.settings
     else:
-        return QSettings('sms', 'guesttracker')
+        return QSettings('hba', 'guesttracker')
 
 
 def get_setting(key: str, default: Union[str, bool] = None) -> Any:
@@ -161,7 +161,7 @@ def get_qt_app() -> QApplication:
     if app is None:
         app = QApplication([sys.executable])
 
-        app.setWindowIcon(QIcon(str(cf.p_res / 'images/sms_icon.png')))
+        app.setWindowIcon(QIcon(str(cf.p_res / 'images/gt_icon.png')))
         p = cf.p_res / 'darkstyle.qss'
         with open(p, 'r') as file:
             app.setStyleSheet(file.read())

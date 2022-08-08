@@ -1,5 +1,6 @@
 url:
     issues: https://github.com/jaymegordo/guesttracker/issues/new/choose
+    docs: ''
 
 ModelPaths:
     FortHills:
@@ -23,7 +24,6 @@ ComponentMap:
     HC: Hoist Cylinder
     SC: Steering Cylinder
     PB: Park Brake
-
 
 Email: jaymegordo@gmail.com
 
@@ -68,464 +68,108 @@ Lists:
         - RAMP
         - Service
         - Parts
-    WarrantyTypeCummins:
-        - WNTY
-        - FME
-        - LEMS
-    EventLogStatus:
-        - Complete
-        - Monitor
-        - Waiting Parts (UP)
-        - Waiting Parts (DOWN)
-        - Waiting Customer
-        - Waiting Costing
-        - Work In Progress
-        - Planned
-    WorkOrdersStatus:
-        - Open
-        - Closed
-        - Cancelled
-        - Missing Info
-        - Planned
-        - Pre-Open
-    TSIStatus:
-        - Open
-        - Closed
-        - Missing Info
-        - Waiting Review
-        - In Progress
-    ComponentCOStatus:
-        - 'True'
-        - 'False'
-    TrueFalse:
-        - 'True'
-        - 'False'
-    EquipClass:
-        - Dozer
-        - Dragline
-        - Drill
-        - Excavator
-        - Grader
-        - Loader
-        - Shovel
-        - Truck
-        - Truck_Electric
-        - Truck_Mechanical
-        - Skid_Steer
-        - Packer
-        - Crusher
-        - Component
-    FailureCategory:
-        - Assembly Issue
-        - Crack
-        - Cold
-        - Connection Loose
-        - Contamination
-        - Failed Component
-        - Factory Campaign
-        - Improper Maintenance
-        - Low Oil/ Fuel
-        - Low-hour Failure
-        - No Faults Active
-        - No Issue
-        - Normal Service
-        - Normal Wear
-        - OEM Issue
-        - Operations Damage
-        - Operator Error
-        - Snow/ Ice
-        - Vibration
-        - Water
-        - Calibration
-        - Customer Request
-    RemovalReason:
-        - High Hour Changeout
-        - Damage/Abuse
-        - Convenience
-        - Failure
-        - Pro Rata Buy-in
-        - Warranty
-        - Unknown
-    KAPhenomenon:
-        - Broken
-        - Defective Adjustment
-        - Defective Appearance
-        - Enter/Leaks
-        - High/Low Level
-        - Interference
-        - Malfunction
-        - Operational Complaint
-        - Serviceability
-        - Wear/Rust/Scratched(Surface)
-        - Wrong/Missing Part
-    KAComponentGroup:
-        - Accessory & Parts
-        - Air Cleaner
-        - Air Conditioner
-        - Air System
-        - Alternator
-        - Arm
-        - Attachment
-        - Autonomous Control System Unit
-        - Battery
-        - Bell Crank
-        - Bevel Gear System
-        - Blade (Clawler Tractor)
-        - Boom
-        - Brake
-        - Brake Cooler
-        - Bucket (Wheel Loader)
-        - Bucket(H/E Backhoe)
-        - Cab Ass'Y Group
-        - Carrier Roller
-        - Cooling Fan
-        - Damper, Universal Joint System
-        - Direct Transmission
-        - Drive Shaft
-        - Dump Body (D/T)
-        - E.D Alternator
-        - Electrical System
-        - Electronic Controller
-        - Engine Assy
-        - Final Drive
-        - Fork Lift Work Equipment
-        - Front Axle
-        - Front Wheel Brake
-        - Fuel Tank
-        - Fuel Tank Group
-        - Grid Box Assy
-        - Guard
-        - Hst Motor
-        - Hst Pump
-        - Hst System
-        - Hyd.Breaker Assy
-        - Hydr0-Mechanical Transmission(Hmt)
-        - Hydraulic Control Valve
-        - Hydraulic Cylinder
-        - Hydraulic Gear Pump
-        - Hydraulic Piping(1)
-        - Hydraulic Piston Pump
-        - Hydraulic Tank
-        - Hydro Static Steering
-        - Idler
-        - Komtrax Assy
-        - Lift Arm
-        - Machine
-        - Main Frame & Out-Rigger
-        - Monitor Panel
-        - Motor Grader,Stabilizer W/Equipment
-        - Ogm System Unit
-        - Operator Cab & Rops
-        - Operator Seat Group
-        - Others
-        - Parking Brake
-        - Pilot Control System
-        - Power Take Off System
-        - Power Train Unit
-        - Ppc Valve Ass'Y
-        - Ppc Valve, Poc Valve System
-        - Radiator Core
-        - Radiator Group
-        - Radio
-        - Rear Axle
-        - Rear Wheel Brake
-        - Recoil Spring
-        - Revolving Frame,Counter Weight
-        - Ripper
-        - Smart Construction Related
-        - Sprocket
-        - Starter
-        - Steering Brake
-        - Steering Clutch
-        - Steering System (Wheel Type)
-        - Steering Valve Assy
-        - Supply Pump
-        - Suspension System
-        - Swing Circle
-        - Swing Machinery
-        - Swing Motor
-        - Swivel Joint
-        - Tc Cooler & Oil Cooler Group
-        - Torque Convertor
-        - Torque Flow Transmission Assy
-        - Track Frame
-        - Track Roller
-        - Track Shoe
-        - Transfer
-        - Travel Motor Assy
-        - Trolley System Unit
-        - Wheel Motor Assy (Motor+Tm) Ac
-        - Wheel, Tire
-        - Wiring Harness
-        - Work Eqp Oil Cooler Group
-        - Work Equipment (Wheel Loader)
-        - Work Equipment Control
-        - Work Equipment Control Valve
-        - Work Equipment For H/E
-
-
 
 # Convert title to tablename > can select from views but not update them
 TableName:
     Class: # map class name to title
-        EventLog: Event Log
-        WorkOrders: Work Orders
-        TSI: TSI
-        ComponentCO: Component CO
-        ComponentSMR: Component SMR
-        ComponentCOReport: Component CO
-        UnitInfo: Unit Info
-        NewFCs: FC Summary
-        FCSummary: FC Summary
-        FCDetails: FC Details
-        EmailList: Email List
-        Availability: Availability
-        OilSamples: Oil Samples
-        UserSettings: Users
-        Parts: Parts
+        Accounts: Accounts
+        ChargeItems: Charge Items
+        Charges: Charges
+        Classes: Classes
+        Customers: Customers
+        PackageUnits: Package Units
+        Packages: Packages
+        Reservations: Reservations
+        Units: Units
     Select:
-        EventLogBase: EventLog
-        FCBase: viewFactoryCampaign
-        ComponentSMR: viewPredictedCO
-        UnitInfo: UnitID
-        EmailList: EmailList
-        AvailTopDowns: Downtime
-        AvailBase: Downtime
-        UserSettings: UserSettings
-        OilSamples: OilSamples
-        Parts: Parts
+        Placeholder: Placeholder
     Update:
-        FCSummary: FCSummary
-        FCDetails: FactoryCampaign
-        NewFCs: FCSummary # dont actually need this, remove somehow
-        UserSettings: UserSettings
-        OilSamples: OilSamples
+        Placeholder: Placeholder
+
 
 # Table header conversion
 Headers:
-    Event Log:
-        UID: UID
-        Passover: PassoverSort
-        Status: StatusEvent
-        MineSite: MineSite
-        Unit: Unit
-        Title: Title
-        Description: Description
-        Failure Cause: FailureCause
-        Date Added: DateAdded
-        Date Complete: DateCompleted
-        Issue Category: IssueCategory
-        Sub Category: SubCategory
-        Failure Category: Cause
-        Added By: CreatedBy
-        Time Called: TimeCalled
-        TSI: StatusTSI
-
-    Work Orders:
-        UID: UID
-        Status: StatusWO
-        Wrnty: WarrantyYN
-        Work Order: WorkOrder
-        Seg: Seg
-        Customer WO: SuncorWO
-        Customer PO: SuncorPO
-        MineSite: MineSite
-        Model: Model
-        Unit: Unit
-        Serial: Serial
-        Title: Title
-        Part Number: PartNumber
-        Order Parts: OrderParts
-        SMR: SMR
-        Date Added: DateAdded
-        Date Complete: DateCompleted
-        Added By: CreatedBy
-        Comp CO: ComponentCO
-        Pics: Pictures
-        Comments: WOComments
-
-    FC Summary:
-        MineSite: MineSite
-        FC Number: FCNumber
-        Subject: SubjectShort
-        Type: Classification
-        Action Reqd: Resp
-        Hrs: Hours
-        Part Number: PartNumber
-        Parts Avail: PartAvailability
-        Comments: Comments # not sure
-        Release Date: ReleaseDate
-        Expiry Date: ExpiryDate
-        Prog:
-        Prog %:
-        Hrs: Hours
-
-    FC Details:
-        UID: UID
-        MineSite: MineSite
-        Model: Model
-        Unit: Unit
-        FC Number: FCNumber
-        Complete: Complete
-        Sched: Scheduled
-        Closed: ManualClosed
-        Ignore: Ignore
-        Type: Classification
-        Subject: Subject
-        Date Complete SMS: DateCompleteSMS
-        Date Complete KA: DateCompleteKA
-        Expiry Date: ExpiryDate
-        SMR: SMR
-        Pics: Pictures
-        Notes: Notes
-
-    TSI:
-        UID: UID
-        Status: StatusTSI
-        Date Added: DateAdded
-        Date Submitted: DateTSISubmission
-        TSI No: TSINumber
-        WO: WorkOrder
-        MineSite: MineSite
-        Model: Model
-        Unit: Unit
-        Serial: Serial
-        Title: Title
-        Unit SMR: SMR
-        Part SMR: ComponentSMR
-        Part Name: TSIPartName
-        Part Number: PartNumber
-        Serial No: SNRemoved
-        Failure Cause: FailureCause
-        Author: TSIAuthor
-        Pics: Pictures
-        KA Phenomenon: KAPhenomenon
-        KA Comp Group: KAComponentGroup
-        Details: TSIDetails
-
-    Component CO:
-        UID: UID
-        MineSite: MineSite
-        Model: Model
-        Unit: Unit
-        Component: Component
-        Side: Modifier
-        Group CO: GroupCO
-        CO Date: DateAdded
-        Unit SMR: SMR
-        Comp SMR: ComponentSMR
-        Bench SMR: bench_smr
-        Life Achieved: life_achieved
-        SN Removed: SNRemoved
-        SN Installed: SNInstalled
-        Install SMR: install_smr
-        Wtny: WarrantyYN
-        CapUSD: CapUSD
-        SMS WO: WorkOrder
-        Customer WO: SuncorWO
-        Customer PO: SuncorPO
-        Reman: Reman
-        Removal Reason: SunCOReason
-        Failure Cause: FailureCause
-        Status: COConfirmed
-    
-    Component SMR:
-        MineSite: MineSite
-        Model: Model
-        Unit: Unit
-        Component: Component
-        Side: Modifier
-        Bench SMR: bench_smr
-        Curr Unit SMR: CurrentUnitSMR
-        SMR Last CO: SMRLastCO
-        Curr Comp SMR: CurrentComponentSMR
-        Pred. CO Date: PredictedCODate
-        Life Remaining: LifeRemaining
-        Last SN Installed: SNInstalled
-
-    Unit Info:
-        MineSite: MineSite
-        Customer: Customer
-        Equip Type: EquipClass
-        Model: Model
-        Serial: Serial
-        Unit: Unit
-        Current SMR: CurrentSMR
-        SMR Measure Date: DateSMR
-        Delivery Date: DeliveryDate
-        Warranty Remaining: Remaining
-        GE Warranty: GE_Remaining
-        PLM Target: TargetPayload
-        Notes: Notes
-
-    Email List:
-        UserGroup: UserGroup
-        MineSite: MineSite
-        Email: Email
-        Passover: Passover
-        WO Request: WORequest
-        FC Cancelled: FCCancelled
-        Pics DLS: PicsDLS
-        PRP: PRP
-        FC Summary: FCSummary
-        TSI: TSI
-        RAMP: RAMP
-        Service: Service
-        Parts: Parts
-        AvailDaily: AvailDaily
-        AvailReports: AvailReports
-        FleetReport: FleetReport
-        SMRReport: SMRReport
-    
-    Availability:
-        Unit: Unit
-        ShiftDate: ShiftDate
-        StartDate: StartDate
-        EndDate: EndDate
-        Total: Duration
-        SMS: SMS
-        Suncor: Suncor
-        Category Assigned: CategoryAssigned
-        DownReason: DownReason
-        Comment: Comment
-        Assigned: Assigned
-    
-    Users:
-        UserName: UserName
-        Email: Email
-        LastLogin: LastLogin
-        Version: Ver
-        Domain: Domain
-        UserGroup: UserGroup
-        MineSite: MineSite
-        ODBC Driver: odbc_driver
-        Install Dir: install_dir
-
-
-    Parts:
-        Model Base: ModelBase
-        Model: Model
-        Part Number: PartNo
-        Part Name: PartName
-        Alt Part Name: PartNameAlt
-
-    FCImport:
-        fc_number_seq: FCNumber
-        distributor: Distributor
-        branch: Branch
-        fc_start_date: StartDate
-        model: Model
-        serial: Serial
-        fc_end_date: EndDate
-        subject: Subject
-        claim_no: ClaimNo
-        completion_smr: SMR
-        completion_date: DateCompleteKA
-        status: Status
-        smr_limit: SMRLimit
-        classification: Classification
-        fid_expiration_date: ExpiryDate
-        stock_kac: Stock
+    Reservations:
+        uid: uid
+        Status: status
+        Unit Assignments: unit_assignments
+        Arrival Date: arrival_date
+        Departure Date: departure_date
+        Date Made: date_made
+        Cancel Date: cancel_date
+        Num Persons: num_persons
+        Deposit Amount: deposit_amount
+        Deposit Date: deposit_date
+        Notes: notes
+        Requests: requests
+    Customers:
+        uid: uid
+        Name: name
+        Email: email
+        First Contact: first_contact
+        Last Contact: last_contact
+        Home Phone: home_phone
+        Work Phone: work_phone
+        Alt Phone: alt_phone
+        Company: company
+        Addr1: addr1
+        City: city
+        State: state
+        Zip: zip
+        Country: country
+        Addr2: addr2
+        Notes: notes
+        International: international
+        Relationship: relationship
+        Source: source
+        Name First: name_first
+        Name Last: name_last
+    Accounts:
+        uid: uid
+        Name: name
+        Number: number
+        Tax Rate: tax_rate
+    Charge Items:
+        uid: uid
+        Name: name
+        Pre Tax Price: pre_tax_price
+        Tax Rate: tax_rate
+        Post Tax Price: post_tax_price
+        Includes Tax: includes_tax
+    Charges:
+        uid: uid
+        Kind: kind
+        Sub Kind: sub_kind
+        Item: item
+        Charge Date: charge_date
+        Charge Time: charge_time
+        Posting Date: posting_date
+        Quantity: quantity
+        Pre Tax Price: pre_tax_price
+        Post Tax Price: post_tax_price
+        Total Amount: total_amount
+        Tax1 Rate: tax1_rate
+        Tax2 Rate: tax2_rate
+        Total Tax1: total_tax1
+        Total Tax2: total_tax2
+        Includes Tax: includes_tax
+        Discount: discount
+    Classes:
+        uid: uid
+        Name: name
+    Package Units:
+        uid: uid
+    Packages:
+        uid: uid
+        Name: name
+        Description: description
+        Rate: rate
+    Units:
+        uid: uid
+        Name: name
+        Abbr: abbr
+        Max Persons: max_persons
+        Active: active
 
 Platform:
     mac:

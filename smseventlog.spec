@@ -42,7 +42,7 @@ log = getlog(__name__)
 procs = fl.find_procs_by_name('sms event log')
 if procs:
     try:
-        raise Exception('Close SMS Event Log.exe first!')
+        raise Exception('Close HBA Guest Tracker.exe first!')
     finally:
         sys.exit(1)
 
@@ -117,7 +117,7 @@ if not cf.is_win:
     # binaries = [('/usr/local/bin/chromedriver', 'selenium/webdriver')]
     hookspath = [Path.home() / '.local/share/virtualenvs/SMS-4WPEHYhu/lib/python3.8/site-packages/pyupdater/hooks']
     dist_folder_name = 'guesttracker_mac'
-    icon_name = 'sms_icon.icns'
+    icon_name = 'gt_icon.icns'
     name_pyu = 'mac' # pyupdater needs to keep this name the same, is changed for final upload/dist
 
     run_pyupdater = 'pyupdater' in os.environ.get('_', '')
@@ -136,7 +136,7 @@ else:
     # not sure if this is needed, seemed to work without
     hookspath = [Path.home() / 'AppData/Local/pypoetry/Cache/virtualenvs/guesttracker-vpjpMWts-py3.9/Lib/site-packages/pyupdater/hooks']
     dist_folder_name = 'guesttracker_win'
-    icon_name = 'sms_icon.ico'
+    icon_name = 'gt_icon.ico'
     name_pyu = 'win'
     run_pyupdater = os.environ.get('KMP_INIT_AT_FORK', None) is None # this key doesnt exist with pyu
     py_ext = ('pyd', 'dll')
@@ -162,7 +162,7 @@ if not eval(os.getenv('RUN_PYINSTALLER', 'False')):
     console = False
 else:
     log.info('**** PYINSTALLER ****')
-    name = 'SMS Event Log' # running from pyinstaller
+    name = 'HBA Guest Tracker' # running from pyinstaller
     console = True
 
 a = Analysis(
@@ -228,7 +228,7 @@ if not cf.is_win:
         info_plist={
             'NSPrincipalClass': 'NSApplication',
             'NSAppleScriptEnabled': 'YES',
-            'NSAppleEventsUsageDescription': 'SMS Event Log would like to automate actions in other applications.',
+            'NSAppleEventsUsageDescription': 'HBA Guest Tracker would like to automate actions in other applications.',
             'CFBundleShortVersionString': VERSION,
             'CFBundleVersion': VERSION,
             },

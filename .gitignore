@@ -36,3 +36,6 @@ report.docx
 report.html
 docs/_build
 jgutils
+tracker.db
+tracker.sqlite
+Thumbs.db

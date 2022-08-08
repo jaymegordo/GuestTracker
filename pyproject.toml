@@ -4,7 +4,7 @@ max_line_length = 120
 
 [tool.poetry]
 name = "GuestTracker"
-version = "1.0.0"
+version = "2.0.0"
 description = "Guest Tracker for HBA"
 authors = ["Jayme Gordon <jaymegordo@gmail.com>"]
 license = "MIT"
@@ -22,6 +22,8 @@ xlrd = "==2.0.1"
 openpyxl = "==3.0.10"
 joblib = "==1.1.0"
 jgutils = {path = "../jgutils", develop = true}
+MarkupSafe = "2.0.1"
+
 
 [tool.poetry.group.qtapp.dependencies]
 PyQt6 = "==6.3.0"
@@ -38,7 +40,7 @@ python-docx = "==0.8.11"
 tqdm = "==4.64.0"
 markdown-it-py = "==0.6.2"
 QDarkStyle = "==2.8.1"
-# seaborn = "==0.11.2"
+seaborn = "0.11.2"
 Jinja2 = "==2.11.3"  # optional dep for df style
 jgutils = {path = "../jgutils", extras = [], develop = true}
 

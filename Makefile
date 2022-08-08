@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 utils := @poetry run python -m scripts.utils
-code := guesttracker scripts az_*
+code := guesttracker scripts
 
 
 .PHONY : codecount

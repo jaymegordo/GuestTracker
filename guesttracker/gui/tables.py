@@ -16,20 +16,17 @@ from PyQt6.QtWidgets import (
     QAbstractItemView, QApplication, QHBoxLayout, QHeaderView, QLabel,
     QLineEdit, QListWidget, QListWidgetItem, QMenu, QPushButton, QStyle,
     QTableView, QTableWidget, QVBoxLayout, QWidget, QWidgetAction)
-from selenium.webdriver.remote.webdriver import WebDriver
+# from selenium.webdriver.remote.webdriver import WebDriver
 from sqlalchemy.orm.query import Query as SQLAQuery
 
 from guesttracker import config as cf
 from guesttracker import dbtransaction as dbt
 from guesttracker import dt
 from guesttracker import errors as er
-from guesttracker import eventfolders as efl
 from guesttracker import functions as f
 from guesttracker import getlog
 from guesttracker import queries as qr
 from guesttracker import styles as st
-from guesttracker.data import factorycampaign as fc
-from guesttracker.data.internal import dls
 from guesttracker.database import db
 from guesttracker.gui import _global as gbl
 from guesttracker.gui import formfields as ff
@@ -43,10 +40,10 @@ from guesttracker.gui.dialogs.addrows import (
     AddEmail, AddEvent, AddPart, AddUnit)
 from guesttracker.gui.dialogs.tables import ACInspectionsDialog, UnitSMRDialog
 from guesttracker.gui.multithread import Worker
+from guesttracker.queries.hba import HBAQueryBase
 from guesttracker.utils import dbmodel as dbm
 from guesttracker.utils import email as em
 from guesttracker.utils import fileops as fl
-from guesttracker.utils.web import TSIWebPage
 from jgutils import pandas_utils as pu
 
 if TYPE_CHECKING:
@@ -82,7 +79,7 @@ class TableView(QTableView):
     def __init__(
             self,
             parent: 'TableWidget' = None,
-            default_headers=None,
+            default_headers: Union[List[str], None] = None,
             editable=True,
             header_margin: int = None,
             warn_rows: int = 2000,
@@ -949,10 +946,16 @@ class TableView(QTableView):
 class TableWidget(QWidget):
     """Controls TableView & buttons/actions within tab"""
 
-    def __init__(self, parent: 'TabWidget' = None, refresh_on_init: bool = True):
+    def __init__(
+            self,
+            parent: Union['TabWidget', None] = None,
+            refresh_on_init: bool = True,
+            name: Union[str, None] = None,
+            **kw):
         super().__init__(parent)
 
-        name = self.__class__.__name__
+        if name is None:
+            name = self.__class__.__name__
         self.name = name
         self.persistent_filters = []  # el/wo usergroup filters
 
@@ -978,7 +981,7 @@ class TableWidget(QWidget):
         # get default refresh dialog from refreshtables by name
         self.refresh_dialog = getattr(rtbls, name, rtbls.RefreshTable)  # type: Type[rtbls.RefreshTable]
 
-        self.query = getattr(qr, name)(parent=self, theme='dark')
+        self.query = getattr(qr, name, HBAQueryBase)(parent=self, theme='dark', name=self.name)
         self.dbtable = self.query.update_table  # type: dbm.Base
         db_col_map = {}
 
@@ -1427,6 +1430,25 @@ class TableWidget(QWidget):
         self.open_tsi(status=val_new, index=index)
 
 
+class HBATableWidget(TableWidget):
+    def __init__(self, name: str, parent=None):
+        super().__init__(parent=parent, name=name)
+        self.add_action(
+            name='Add New',
+            func=self.show_addrow,
+            btn=True,
+            ctx='add',
+            tooltip='Add new event')
+
+    class View(TableView):
+        def __init__(self, parent: TableWidget):
+            super().__init__(parent=parent)
+            self.mcols['hide'] = ('uid',)
+
+    def show_addrow(self):
+        pass
+
+
 class EventLogBase(TableWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -1496,29 +1518,29 @@ class EventLogBase(TableWidget):
             items = cf.config['Lists'][f'{self.parent.name}Status']
             self.set_combo_delegate(col='Status', items=items, allow_blank=False)
 
-        def update_eventfolder_path(self, index: QModelIndex, val_prev, **kw):
-            """Update event folder path when Title/Work Order/Date Added changed
+        # def update_eventfolder_path(self, index: QModelIndex, val_prev, **kw):
+        #     """Update event folder path when Title/Work Order/Date Added changed
 
-            Parameters
-            ----------
-            index : QModelIndex\n
-            val_prev :
-                Value before changed
-            """
-            if self.u.is_cummins:
-                return
+        #     Parameters
+        #     ----------
+        #     index : QModelIndex\n
+        #     val_prev :
+        #         Value before changed
+        #     """
+        #     if self.u.is_cummins:
+        #         return
 
-            e = self.e
-            minesite = db.get_unit_val(e.Unit, 'MineSite')
+        #     e = self.e
+        #     minesite = db.get_unit_val(e.Unit, 'MineSite')
 
-            # get header from index
-            header = index.model().headerData(i=index.column()).replace(' ', '').lower()
-            if header == 'codate':
-                header = 'dateadded'  # little hack for component CO table
+        #     # get header from index
+        #     header = index.model().headerData(i=index.column()).replace(' ', '').lower()
+        #     if header == 'codate':
+        #         header = 'dateadded'  # little hack for component CO table
 
-            ef = efl.EventFolder \
-                .from_model(e=e, data_model=self.data_model, irow=index.row(), table_widget=self.parent) \
-                .update_eventfolder_path(vals={header: val_prev})
+        #     ef = efl.EventFolder \
+        #         .from_model(e=e, data_model=self.data_model, irow=index.row(), table_widget=self.parent) \
+        #         .update_eventfolder_path(vals={header: val_prev})
 
     def show_addrow(self):
         dlg = AddEvent(parent=self)
@@ -1570,60 +1592,60 @@ class EventLogBase(TableWidget):
             e_fc = self.get_e_fc(uid=e.UID)
             self.unlink_fc(e_fc=e_fc)
 
-    def view_folder(self):
-        """Open event folder of currently active row in File Explorer/Finder"""
-        if not self.check_cummins():
-            return
+    # def view_folder(self):
+    #     """Open event folder of currently active row in File Explorer/Finder"""
+    #     if not self.check_cummins():
+    #         return
 
-        view, i, e = self.view, self.i, self.e_db
+    #     view, i, e = self.view, self.i, self.e_db
 
-        try:
-            minesite = db.get_unit_val(e.Unit, 'MineSite')
-        except KeyError:
-            self.update_statusbar(
-                f'Warning: Could not get minesite for unit: "{e.Unit}". Does it exist in the database?')
-            return
+    #     try:
+    #         minesite = db.get_unit_val(e.Unit, 'MineSite')
+    #     except KeyError:
+    #         self.update_statusbar(
+    #             f'Warning: Could not get minesite for unit: "{e.Unit}". Does it exist in the database?')
+    #         return
 
-        # Fix ugly titles if needed
-        title = e.Title
-        title_good = f.nice_title(title=title)
+    #     # Fix ugly titles if needed
+    #     title = e.Title
+    #     title_good = f.nice_title(title=title)
 
-        if not title == title_good:
-            view.set_value(col_name='Title', val=title_good, uid=e.UID, irow=i)
-            self.update_statusbar(f'Title fixed: {title_good}', success=True)
+    #     if not title == title_good:
+    #         view.set_value(col_name='Title', val=title_good, uid=e.UID, irow=i)
+    #         self.update_statusbar(f'Title fixed: {title_good}', success=True)
 
-        efl.EventFolder.from_model(e=e, irow=i, data_model=view.data_model).show()
+    #     efl.EventFolder.from_model(e=e, irow=i, data_model=view.data_model).show()
 
-    def view_dls_folder(self) -> None:
-        """View current unit's dls folder
-        """
-        efl.UnitFolder.from_model(e=self.e).show(dls=True)
+    # def view_dls_folder(self) -> None:
+    #     """View current unit's dls folder
+    #     """
+    #     efl.UnitFolder.from_model(e=self.e).show(dls=True)
 
     def get_e_fc(self, uid: float):
         """Try to select FC from FactoryCampaing table by UID"""
         return dbt.select_row_by_secondary(dbtable=dbm.FactoryCampaign, col='UID', val=uid)
 
-    def link_fc(self):
-        """Show available FCs dialog, link selected event to FC"""
-        if not self.check_cummins():
-            return
+    # def link_fc(self):
+    #     """Show available FCs dialog, link selected event to FC"""
+    #     if not self.check_cummins():
+    #         return
 
-        # get selected row
-        view, i, e = self.view, self.i, self.e_db
-        model = view.model
+    #     # get selected row
+    #     view, i, e = self.view, self.i, self.e_db
+    #     model = view.model
 
-        # show fc dialog
-        ok, fc_number, title = fc.select_fc(unit=e.Unit)
+    #     # show fc dialog
+    #     ok, fc_number, title = fc.select_fc(unit=e.Unit)
 
-        if not ok:
-            return
+    #     if not ok:
+    #         return
 
-        fc.link_fc_db(unit=e.Unit, uid=e.UID, fc_number=fc_number)
+    #     fc.link_fc_db(unit=e.Unit, uid=e.UID, fc_number=fc_number)
 
-        # update current title
-        view.set_value(col_name='Title', val=title, uid=e.UID, irow=i)
+    #     # update current title
+    #     view.set_value(col_name='Title', val=title, uid=e.UID, irow=i)
 
-        self.update_statusbar(f'Event linked to FC: {e.Unit}, {title}', success=True)
+    #     self.update_statusbar(f'Event linked to FC: {e.Unit}, {title}', success=True)
 
     def unlink_fc(self, e_fc):
         """Unlink FC from event by setting e_fc UID to None"""
@@ -1659,13 +1681,13 @@ class EventLogBase(TableWidget):
                 self.update_statusbar(f'Event removed from database: {e.Unit} - {e.Title}')
 
                 # ask to delete event folder
-                if self.u.usergroup == 'SMS':
-                    ef = efl.EventFolder.from_model(e)
-                    if ef.exists:
-                        msg = f'Found event folder containing ({ef.num_files}) files/folders, would you like to delete? This cannot be undone.'  # noqa
-                        if dlgs.msgbox(msg=msg, yesno=True):
-                            if ef.remove_folder():
-                                self.update_statusbar('Event folder successfully removed.')
+                # if self.u.usergroup == 'SMS':
+                #     ef = efl.EventFolder.from_model(e)
+                #     if ef.exists:
+                #         msg = f'Found event folder containing ({ef.num_files}) files/folders, would you like to delete? This cannot be undone.'  # noqa
+                #         if dlgs.msgbox(msg=msg, yesno=True):
+                #             if ef.remove_folder():
+                #                 self.update_statusbar('Event folder successfully removed.')
             else:
                 self.update_statusbar('Error: Event not deleted from database.')
 
@@ -2133,21 +2155,21 @@ class TSI(EventLogBase):
         query.fltr.add(vals=dict(TSIAuthor=username))
         self.refresh()
 
-    @property
-    def driver(self) -> Union[WebDriver, None]:
-        """Save driver for use between TSI webpage calls"""
-        if not self.mw is None:
-            # use global mw driver if exists (not testing)
-            return self.mw.driver
-        else:
-            return self._driver if hasattr(self, '_driver') else None
+    # @property
+    # def driver(self) -> Union[WebDriver, None]:
+    #     """Save driver for use between TSI webpage calls"""
+    #     if not self.mw is None:
+    #         # use global mw driver if exists (not testing)
+    #         return self.mw.driver
+    #     else:
+    #         return self._driver if hasattr(self, '_driver') else None
 
-    @driver.setter
-    def driver(self, driver: WebDriver):
-        if not self.mw is None:
-            self.mw.driver = driver
-        else:
-            self._driver = driver
+    # @driver.setter
+    # def driver(self, driver: WebDriver):
+    #     if not self.mw is None:
+    #         self.mw.driver = driver
+    #     else:
+    #         self._driver = driver
 
     def open_tsi_homepage(self):
         """Just login and show the homepage so user can go from there, check TSIs etc"""
@@ -2196,79 +2218,79 @@ class TSI(EventLogBase):
 
         self.update_statusbar(f'Creating [{len(tsis)}] new TSI(s) in worker thread. GUI free to use.')
 
-    def process_multi_tsis(self, tsis: List[TSIWebPage], return_to_home: bool = True) -> List[TSIWebPage]:
-        submitted = []
-        for tsi in tsis:
-            try:
-                tsi.driver = self.driver
-                tsi.open_tsi(return_to_home=return_to_home, submit_tsi=True)
-                self.driver = tsi.driver
-            except:
-                log.error(f'Failed to create TSI: {tsi.name}')
-                raise
-                tsi.open_url(tsi.pages['tsi_home'])
+    # def process_multi_tsis(self, tsis: List[TSIWebPage], return_to_home: bool = True) -> List[TSIWebPage]:
+    #     submitted = []
+    #     for tsi in tsis:
+    #         try:
+    #             tsi.driver = self.driver
+    #             tsi.open_tsi(return_to_home=return_to_home, submit_tsi=True)
+    #             self.driver = tsi.driver
+    #         except:
+    #             log.error(f'Failed to create TSI: {tsi.name}')
+    #             raise
+    #             tsi.open_url(tsi.pages['tsi_home'])
 
-            submitted.append(tsi)
+    #         submitted.append(tsi)
 
-        return submitted
+    #     return submitted
 
-    def _init_tsi(self, e: dbm.Base, e_db: dbt.Row) -> TSIWebPage:
-        """Fill TSI webpage with values from TSI tab
-        """
-        d = e.DateAdded.strftime('%m/%d/%Y')
+    # def _init_tsi(self, e: dbm.Base, e_db: dbt.Row) -> TSIWebPage:
+    #     """Fill TSI webpage with values from TSI tab
+    #     """
+    #     d = e.DateAdded.strftime('%m/%d/%Y')
 
-        field_vals = {
-            'Unit': e_db.Unit,
-            'Failure Date': d,
-            'Repair Date': d,
-            'Failure SMR': e_db.SMR,
-            'Hours On Parts': e_db.ComponentSMR,
-            'Serial': e_db.SNRemoved,
-            'Part Number': e_db.PartNumber,
-            'Part Name': e_db.TSIPartName,
-            'New Part Serial': e_db.SNInstalled,
-            'Work Order': e_db.WorkOrder,
-            'Complaint': e_db.Title,
-            'Cause': e_db.FailureCause,
-            'Notes': e_db.Description}
+    #     field_vals = {
+    #         'Unit': e_db.Unit,
+    #         'Failure Date': d,
+    #         'Repair Date': d,
+    #         'Failure SMR': e_db.SMR,
+    #         'Hours On Parts': e_db.ComponentSMR,
+    #         'Serial': e_db.SNRemoved,
+    #         'Part Number': e_db.PartNumber,
+    #         'Part Name': e_db.TSIPartName,
+    #         'New Part Serial': e_db.SNInstalled,
+    #         'Work Order': e_db.WorkOrder,
+    #         'Complaint': e_db.Title,
+    #         'Cause': e_db.FailureCause,
+    #         'Notes': e_db.Description}
 
-        search_vals = {
-            'Phenomenon': e_db.KAPhenomenon,
-            'Component Group': e_db.KAComponentGroup,
-        }
+    #     search_vals = {
+    #         'Phenomenon': e_db.KAPhenomenon,
+    #         'Component Group': e_db.KAComponentGroup,
+    #     }
 
-        name = f'{e_db.Unit} - {e_db.Title}'
-        msg = f'{name}\n\n' \
-            + 'Would you like to save the TSI after it is created?' \
-            + '\n(Can\'t attach documents unless TSI saved first)'
-        save_tsi = True if dlgs.msgbox(msg=msg, yesno=True) else False
+    #     name = f'{e_db.Unit} - {e_db.Title}'
+    #     msg = f'{name}\n\n' \
+    #         + 'Would you like to save the TSI after it is created?' \
+    #         + '\n(Can\'t attach documents unless TSI saved first)'
+    #     save_tsi = True if dlgs.msgbox(msg=msg, yesno=True) else False
 
-        docs, ef = None, None
-        if save_tsi:
-            docs = None
-            msg = 'Select documents to attach?'
+    #     docs, ef = None, None
+    #     if save_tsi:
+    #         docs = None
+    #         msg = 'Select documents to attach?'
 
-            # if dlgs.msgbox(msg=msg, yesno=True):
-            ef = efl.EventFolder.from_model(e=e_db)
-            ef.check()
-            docs = self.attach_docs(ef=ef)
+    #         # if dlgs.msgbox(msg=msg, yesno=True):
+    #         ef = efl.EventFolder.from_model(e=e_db)
+    #         ef.check()
+    #         docs = self.attach_docs(ef=ef)
 
-            if not docs:
-                msg = 'No documents selected, abort TSI?'
-                if dlgs.msgbox(msg=msg, yesno=True):
-                    return
+    #         if not docs:
+    #             msg = 'No documents selected, abort TSI?'
+    #             if dlgs.msgbox(msg=msg, yesno=True):
+    #                 return
 
-        return TSIWebPage(
-            table_widget=self,
-            name=name,
-            save_tsi=save_tsi,
-            field_vals=field_vals,
-            search_vals=search_vals,
-            serial=e.Serial,
-            model=e.Model,
-            uid=e_db.UID,
-            docs=docs,
-            ef=ef)
+    #     return TSIWebPage(
+    #         table_widget=self,
+    #         name=name,
+    #         save_tsi=save_tsi,
+    #         field_vals=field_vals,
+    #         search_vals=search_vals,
+    #         serial=e.Serial,
+    #         model=e.Model,
+    #         uid=e_db.UID,
+    #         docs=docs,
+    #         ef=ef)
 
     def attach_docs(self, ef=None):
         """Prompt user to select tsi docs and downloads to attach to tsiwebpage"""
@@ -2289,178 +2311,178 @@ class TSI(EventLogBase):
 
         return lst_files
 
-    def handle_tsi_result(self, tsis: Union[TSIWebPage, List[TSIWebPage]] = None) -> None:
-        # get TSIWebpage obj back from worker thread, save TSI Number back to table
-        if tsis is None:
-            self.update_statusbar(msg='ERROR: Failed to create TSIs.')
-            return
+    # def handle_tsi_result(self, tsis: Union[TSIWebPage, List[TSIWebPage]] = None) -> None:
+    #     # get TSIWebpage obj back from worker thread, save TSI Number back to table
+    #     if tsis is None:
+    #         self.update_statusbar(msg='ERROR: Failed to create TSIs.')
+    #         return
 
-        view = self.view
-        msg = f'[{len(tsis)}] new TSI(s) created:\n\n'
-        m_msg = {}
+    #     view = self.view
+    #     msg = f'[{len(tsis)}] new TSI(s) created:\n\n'
+    #     m_msg = {}
 
-        for tsi in f.as_list(tsis):
+    #     for tsi in f.as_list(tsis):
 
-            tsi_number, uid, num_files = tsi.tsi_number, tsi.uid, tsi.uploaded_docs
+    #         tsi_number, uid, num_files = tsi.tsi_number, tsi.uid, tsi.uploaded_docs
 
-            # fill tsi number back to table or db
-            # Get correct row number by UID > user may have reloaded table or changed tabs
+    #         # fill tsi number back to table or db
+    #         # Get correct row number by UID > user may have reloaded table or changed tabs
 
-            if not tsi_number is None:
-                irow = view.get_irow_uid(uid=uid)
+    #         if not tsi_number is None:
+    #             irow = view.get_irow_uid(uid=uid)
 
-                if not irow is None:
-                    index = view.create_index_activerow(irow=irow, col_name='TSI No')
-                    view.data_model.setData(index=index, val=tsi_number)
-                else:
-                    dbt.Row(dbtable=self.get_dbtable(), keys=dict(UID=uid)) \
-                        .update(vals=dict(TSINumber=tsi_number))
+    #             if not irow is None:
+    #                 index = view.create_index_activerow(irow=irow, col_name='TSI No')
+    #                 view.data_model.setData(index=index, val=tsi_number)
+    #             else:
+    #                 dbt.Row(dbtable=self.get_dbtable(), keys=dict(UID=uid)) \
+    #                     .update(vals=dict(TSINumber=tsi_number))
 
-            m_msg[tsi.name] = dict(tsi_no=tsi_number, files=num_files)
+    #         m_msg[tsi.name] = dict(tsi_no=tsi_number, files=num_files)
 
-        msg += f.pretty_dict(m_msg, prnt=False)
+    #     msg += f.pretty_dict(m_msg, prnt=False)
 
-        dlgs.msgbox(msg, min_width=400)
+    #     dlgs.msgbox(msg, min_width=400)
 
-    def create_failure_report(self):
-        if not self.check_cummins():
-            return
+    # def create_failure_report(self):
+    #     if not self.check_cummins():
+    #         return
 
-        fl.drive_exists()
-        e, row, view = self.e_db, self.row, self.view
+    #     fl.drive_exists()
+    #     e, row, view = self.e_db, self.row, self.view
 
-        # get event folder
-        ef = efl.EventFolder.from_model(e=e, irow=row.i, data_model=view.data_model)
+    #     # get event folder
+    #     ef = efl.EventFolder.from_model(e=e, irow=row.i, data_model=view.data_model)
 
-        # get pics, body text from dialog
-        cause = e.FailureCause if not e.FailureCause.strip() == '' else 'Uncertain.'
-        complaint = e.Title
+    #     # get pics, body text from dialog
+    #     cause = e.FailureCause if not e.FailureCause.strip() == '' else 'Uncertain.'
+    #     complaint = e.Title
 
-        # NOTE this could be more general for other types of failures
-        correction = 'Crack(s) repaired.' if 'crack' in complaint.lower() else 'Component replaced with new.'
+    #     # NOTE this could be more general for other types of failures
+    #     correction = 'Crack(s) repaired.' if 'crack' in complaint.lower() else 'Component replaced with new.'
 
-        if not e.TSIDetails is None:
-            complaint = f'{complaint}\n\n{e.TSIDetails}'
+    #     if not e.TSIDetails is None:
+    #         complaint = f'{complaint}\n\n{e.TSIDetails}'
 
-        text = dict(
-            complaint=complaint,
-            cause=cause,
-            correction=correction,
-            details=e.Description)
+    #     text = dict(
+    #         complaint=complaint,
+    #         cause=cause,
+    #         correction=correction,
+    #         details=e.Description)
 
-        dlg = dlgs.FailureReport(parent=self, p_start=ef.p_pics, text=text, unit=e.Unit, e=e)
-        if not dlg.exec():
-            return
+    #     dlg = dlgs.FailureReport(parent=self, p_start=ef.p_pics, text=text, unit=e.Unit, e=e)
+    #     if not dlg.exec():
+    #         return
 
-        # create report obj and save as pdf/docx in event folder
-        from guesttracker.reports import FailureReport, PLMUnitReport
-        from guesttracker.utils.word import FailureReportWord
-        kw = {}
+    #     # create report obj and save as pdf/docx in event folder
+    #     from guesttracker.reports import FailureReport, PLMUnitReport
+    #     from guesttracker.utils.word import FailureReportWord
+    #     kw = {}
 
-        if dlg.word_report:
-            Report = FailureReportWord
-            func = 'create_word'
+    #     if dlg.word_report:
+    #         Report = FailureReportWord
+    #         func = 'create_word'
 
-        else:
-            Report = FailureReport
-            func = 'create_pdf'
+    #     else:
+    #         Report = FailureReport
+    #         func = 'create_pdf'
 
-        if dlg.oil_samples:
-            kw['query_oil'] = qr.OilSamplesReport(
-                unit=dlg.unit,
-                component=dlg.component,
-                modifier=dlg.modifier,
-                d_lower=dlg.d_lower,
-                d_upper=e.DateAdded)
+    #     if dlg.oil_samples:
+    #         kw['query_oil'] = qr.OilSamplesReport(
+    #             unit=dlg.unit,
+    #             component=dlg.component,
+    #             modifier=dlg.modifier,
+    #             d_lower=dlg.d_lower,
+    #             d_upper=e.DateAdded)
 
-        if dlg.plm_report:
-            kw['rep_plm'] = PLMUnitReport(
-                unit=dlg.unit,
-                d_upper=dlg.plm_date_upper.dateTime().toPyDateTime(),
-                d_lower=dlg.plm_date_lower.dateTime().toPyDateTime(),
-                include_overloads=True)
+    #     if dlg.plm_report:
+    #         kw['rep_plm'] = PLMUnitReport(
+    #             unit=dlg.unit,
+    #             d_upper=dlg.plm_date_upper.dateTime().toPyDateTime(),
+    #             d_lower=dlg.plm_date_lower.dateTime().toPyDateTime(),
+    #             include_overloads=True)
 
-        rep = Report.from_model(e=e, ef=ef, pictures=dlg.pics, body=dlg.text, **kw)
+    #     rep = Report.from_model(e=e, ef=ef, pictures=dlg.pics, body=dlg.text, **kw)
 
-        # need to msgbox for check overwrite in main thread
-        if not rep.check_overwrite(p_base=ef._p_event):
-            self.update_statusbar(msg='User declined to overwrite existing report.')
-            return
+    #     # need to msgbox for check overwrite in main thread
+    #     if not rep.check_overwrite(p_base=ef._p_event):
+    #         self.update_statusbar(msg='User declined to overwrite existing report.')
+    #         return
 
-        def handle_report_result(rep=None):
-            if rep is None:
-                return
-            msg = 'Failure report created, open now?'
-            if dlgs.msgbox(msg=msg, yesno=True):
-                rep.open_()
+    #     def handle_report_result(rep=None):
+    #         if rep is None:
+    #             return
+    #         msg = 'Failure report created, open now?'
+    #         if dlgs.msgbox(msg=msg, yesno=True):
+    #             rep.open_()
 
-        Worker(func=getattr(rep, func), mw=self.mw) \
-            .add_signals(signals=('result', dict(func=handle_report_result))) \
-            .start()
+    #     Worker(func=getattr(rep, func), mw=self.mw) \
+    #         .add_signals(signals=('result', dict(func=handle_report_result))) \
+    #         .start()
 
-        self.update_statusbar('Creating failure report in worker thread.')
+    #     self.update_statusbar('Creating failure report in worker thread.')
 
-    def zip_recent_dls(self):
-        if not self.check_cummins():
-            return
-        fl.drive_exists()
-        e = self.e
-        unit = e.Unit
+    # def zip_recent_dls(self):
+    #     if not self.check_cummins():
+    #         return
+    #     fl.drive_exists()
+    #     e = self.e
+    #     unit = e.Unit
 
-        p_dls = dls.zip_recent_dls_unit(unit=unit, _zip=False)
-        if not p_dls:
-            return
+    #     p_dls = dls.zip_recent_dls_unit(unit=unit, _zip=False)
+    #     if not p_dls:
+    #         return
 
-        def _handle_zip_result(p_zip):
-            self.update_statusbar(f'Folder successfully zipped: {p_zip.name}')
+    #     def _handle_zip_result(p_zip):
+    #         self.update_statusbar(f'Folder successfully zipped: {p_zip.name}')
 
-        Worker(func=fl.zip_folder_threadsafe, mw=self.mainwindow, p_src=p_dls) \
-            .add_signals(signals=('result', dict(func=_handle_zip_result))) \
-            .start()
-        self.update_statusbar(f'Zipping folder in worker thread: {p_dls.name}')
+    #     Worker(func=fl.zip_folder_threadsafe, mw=self.mainwindow, p_src=p_dls) \
+    #         .add_signals(signals=('result', dict(func=_handle_zip_result))) \
+    #         .start()
+    #     self.update_statusbar(f'Zipping folder in worker thread: {p_dls.name}')
 
-    def email_report(self):
-        """Email selected row, attach failure report doc if exists
-        """
-        if not self.check_cummins():
-            return
+    # def email_report(self):
+    #     """Email selected row, attach failure report doc if exists
+    #     """
+    #     if not self.check_cummins():
+    #         return
 
-        view = self.view
-        lst_attach = []
-        email_list = []
-        minesites = []
+    #     view = self.view
+    #     lst_attach = []
+    #     email_list = []
+    #     minesites = []
 
-        for _, e in self.view.iter_selected_models(db=True):
+    #     for _, e in self.view.iter_selected_models(db=True):
 
-            minesite = db.get_unit_val(e.Unit, 'MineSite')
-            ef = efl.EventFolder.from_model(e=e)
-            p = ef.p_event / f'{ef.title_short}.pdf'
+    #         minesite = db.get_unit_val(e.Unit, 'MineSite')
+    #         ef = efl.EventFolder.from_model(e=e)
+    #         p = ef.p_event / f'{ef.title_short}.pdf'
 
-            # only add new emails for new minesites
-            if not minesite in minesites:
-                email_list += qr.el.EmailListShort(
-                    col_name='TSI',
-                    minesite=minesite,
-                    usergroup=self.u.usergroup).emails
+    #         # only add new emails for new minesites
+    #         if not minesite in minesites:
+    #             email_list += qr.el.EmailListShort(
+    #                 col_name='TSI',
+    #                 minesite=minesite,
+    #                 usergroup=self.u.usergroup).emails
 
-            minesites.append(minesite)
+    #         minesites.append(minesite)
 
-            if p.exists():
-                lst_attach.append(p)
-            else:
-                msg = f'Couldn\'t find report:\n\n{p.name}\n\nSelect file to attach?'
-                if dlgs.msgbox(msg=msg, yesno=True):
-                    lst_attach += dlgs.select_multi_files(p_start=ef._p_event)
-                else:
-                    self.update_statusbar(f'Couldn\'t find report to attach: {p}', warn=True)
-                    # lst_attach = None
+    #         if p.exists():
+    #             lst_attach.append(p)
+    #         else:
+    #             msg = f'Couldn\'t find report:\n\n{p.name}\n\nSelect file to attach?'
+    #             if dlgs.msgbox(msg=msg, yesno=True):
+    #                 lst_attach += dlgs.select_multi_files(p_start=ef._p_event)
+    #             else:
+    #                 self.update_statusbar(f'Couldn\'t find report to attach: {p}', warn=True)
+    #                 # lst_attach = None
 
-        self.email_row(
-            title=f'Failure Summary - [{len(lst_attach)}]',
-            exclude_cols=['UID', 'Status', 'Details', 'Author', 'Pics'],
-            email_list=email_list,
-            body_text='The following TSI(s) have been submitted:',
-            lst_attach=lst_attach)
+    #     self.email_row(
+    #         title=f'Failure Summary - [{len(lst_attach)}]',
+    #         exclude_cols=['UID', 'Status', 'Details', 'Author', 'Pics'],
+    #         email_list=email_list,
+    #         body_text='The following TSI(s) have been submitted:',
+    #         lst_attach=lst_attach)
 
 
 class UnitInfo(TableWidget):
@@ -2493,11 +2515,11 @@ class UnitInfo(TableWidget):
             items = cf.config['Lists']['EquipClass']
             self.set_combo_delegate(col='Equip Type', items=items, allow_blank=False)
 
-    def view_folder(self):
-        """Open event folder of currently active row in File Explorer/Finder"""
-        if not self.check_cummins():
-            return
-        efl.UnitFolder(unit=self.e.Unit).show()
+    # def view_folder(self):
+    #     """Open event folder of currently active row in File Explorer/Finder"""
+    #     if not self.check_cummins():
+    #         return
+    #     efl.UnitFolder(unit=self.e.Unit).show()
 
     def show_addrow(self):
         dlg = AddUnit(parent=self)
@@ -2542,43 +2564,43 @@ class FCBase(TableWidget):
         def __init__(self, parent):
             super().__init__(parent=parent)
 
-    def import_fc(self):
-        lst_csv = dlgs.select_multi_files(
-            p_start=Path.home() / 'Downloads',
-            fltr='*.csv')
+    # def import_fc(self):
+    #     lst_csv = dlgs.select_multi_files(
+    #         p_start=Path.home() / 'Downloads',
+    #         fltr='*.csv')
 
-        if lst_csv is None:
-            return
+    #     if lst_csv is None:
+    #         return
 
-        Worker(func=fc.import_fc, mw=self.mainwindow, lst_csv=lst_csv, upload=True, worker_thread=True) \
-            .add_signals(signals=('result', dict(func=fc.ask_delete_files))) \
-            .start()
-        self.update_statusbar('FC import started in worker thread.')
+    #     Worker(func=fc.import_fc, mw=self.mainwindow, lst_csv=lst_csv, upload=True, worker_thread=True) \
+    #         .add_signals(signals=('result', dict(func=fc.ask_delete_files))) \
+    #         .start()
+    #     self.update_statusbar('FC import started in worker thread.')
 
     def show_addrow(self):
         self.create_fc_manual()
 
-    def create_fc_manual(self):
-        dlg = dlgs.CustomFC(parent=self)
-        if not dlg.exec():
-            return
+    # def create_fc_manual(self):
+    #     dlg = dlgs.CustomFC(parent=self)
+    #     if not dlg.exec():
+    #         return
 
-        units = dlg.units
-        fc_number = dlg.fFCNumber.val
+    #     units = dlg.units
+    #     fc_number = dlg.fFCNumber.val
 
-        m = dict(
-            units=units,
-            fc_number=fc_number,
-            _type=dlg.fType.val,
-            subject=dlg.fSubject.val,
-            release_date=dlg.fReleaseDate.val,
-            expiry_date=dlg.fExpiryDate.val)
+    #     m = dict(
+    #         units=units,
+    #         fc_number=fc_number,
+    #         _type=dlg.fType.val,
+    #         subject=dlg.fSubject.val,
+    #         release_date=dlg.fReleaseDate.val,
+    #         expiry_date=dlg.fExpiryDate.val)
 
-        msg = f'Successfully created manual FC "{fc_number}" for [{len(units)}] unit(s).'
-        Worker(func=fc.create_fc_manual, mw=self.mw, worker_thread=True, **m) \
-            .add_signals(signals=('result', dict(func=lambda *args: self.update_statusbar(msg=msg)))) \
-            .start()
-        self.update_statusbar('Manual FC import started in worker thread.')
+    #     msg = f'Successfully created manual FC "{fc_number}" for [{len(units)}] unit(s).'
+    #     Worker(func=fc.create_fc_manual, mw=self.mw, worker_thread=True, **m) \
+    #         .add_signals(signals=('result', dict(func=lambda *args: self.update_statusbar(msg=msg)))) \
+    #         .start()
+    #     self.update_statusbar('Manual FC import started in worker thread.')
 
     def get_fc_folder(self):
         fl.drive_exists()
@@ -2817,22 +2839,22 @@ class FCDetails(FCBase):
             self.set_combo_delegate(col='Ignore', items=tf, allow_blank=False)
             self.set_combo_delegate(col='Sched', items=tf, allow_blank=False)
 
-    def view_folder(self):
-        view, i, e = self.view, self.i, self.e
+    # def view_folder(self):
+    #     view, i, e = self.view, self.i, self.e
 
-        df = view.df_from_activerows()
-        unit, uid = df.Unit.values[0], df.UID.values[0]
+    #     df = view.df_from_activerows()
+    #     unit, uid = df.Unit.values[0], df.UID.values[0]
 
-        if pd.isnull(uid):
-            msg = 'FC not yet linked to an event, cannot view event folder.'
-            dlgs.msg_simple(msg=msg, icon='warning')
-            return
+    #     if pd.isnull(uid):
+    #         msg = 'FC not yet linked to an event, cannot view event folder.'
+    #         dlgs.msg_simple(msg=msg, icon='warning')
+    #         return
 
-        # create EventLog row/e with UID
-        row = dbt.Row(dbtable=dbm.EventLog, keys=dict(UID=uid))
-        e2 = row.create_model_from_db()
+    #     # create EventLog row/e with UID
+    #     row = dbt.Row(dbtable=dbm.EventLog, keys=dict(UID=uid))
+    #     e2 = row.create_model_from_db()
 
-        efl.EventFolder.from_model(e=e2, irow=i, data_model=view.data_model).show()
+    #     efl.EventFolder.from_model(e=e2, irow=i, data_model=view.data_model).show()
 
 
 class EmailList(TableWidget):

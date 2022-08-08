@@ -8,7 +8,7 @@ from guesttracker.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN  # noqa
 if True:
     from jgutils.logger import getlog  # noqa
 
-__version__ = '3.7.12'
+__version__ = '2.0.0'
 VERSION = __version__
 
 

@@ -17,12 +17,12 @@ IS_QT_APP = not os.getenv('IS_QT_APP') is None
 SYS_FROZEN = getattr(sys, 'frozen', False)
 
 if sys.platform.startswith('win'):
-    p_applocal = Path.home() / 'AppData/Local/SMS Equipment Inc/SMS Event Log'
+    p_applocal = Path.home() / 'AppData/Local/SMS Equipment Inc/HBA Guest Tracker'
     p_drive = Path('P:\\')
     platform = 'win'
     is_win = True
 else:
-    p_applocal = Path.home() / 'Library/Application Support/SMS Event Log'
+    p_applocal = Path.home() / 'Library/Application Support/HBA Guest Tracker'
     p_drive = Path('/Volumes/Public')
     platform = 'mac'
     is_win = False

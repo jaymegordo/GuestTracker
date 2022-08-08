@@ -1,6 +1,6 @@
 import os
 import shutil
-import signal
+# import signal
 import subprocess
 import sys
 import time
@@ -11,12 +11,14 @@ from typing import *
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import pandas as pd
-import psutil
 
 from guesttracker import config as cf
 from guesttracker import errors as er
 from guesttracker import functions as f
 from guesttracker import getlog
+
+# import psutil
+
 
 log = getlog(__name__)
 
@@ -487,9 +489,9 @@ def read_access_database(p: Path, table_name: str, index_col: str = None, raw_da
         .pipe(f.default_data)
 
 
-def find_procs_by_name(name):
-    "Return a list of processes matching 'name'."
-    return [p for p in psutil.process_iter(['name']) if name.lower() in p.info['name'].lower()]
+# def find_procs_by_name(name):
+#     "Return a list of processes matching 'name'."
+#     return [p for p in psutil.process_iter(['name']) if name.lower() in p.info['name'].lower()]
 
 
 def kill_proc(procs):
@@ -502,55 +504,55 @@ def kill_proc(procs):
             log.warning(f'Failed to kill process: {p.name()}')
 
 
-def get_sms_proc_locking(filename='zip'):
-    """Get background SMS Event Log.exe process if locking 'zip' file for update"""
-    procs = find_procs_by_name('sms event log')
-    pid_self = os.getpid()
+# def get_sms_proc_locking(filename='zip'):
+#     """Get background HBA Guest Tracker.exe process if locking 'zip' file for update"""
+#     procs = find_procs_by_name('sms event log')
+#     pid_self = os.getpid()
 
-    # check if each process has any open files containing search filename
-    return [p for p in procs if
-            not p.pid == pid_self and
-            [x for x in [item.path for item in p.open_files()] if x.endswith(filename)]]
-
-
-def kill_sms_proc_locking(filename='zip'):
-    procs = get_sms_proc_locking(filename)
-    num_procs = len(procs)
-
-    log.info(f'Found {num_procs} locking processes.')
-    if num_procs == 1:
-        proc = procs[0]
-        try:
-            log.info(f'Trying to kill process: {proc.name()}, {proc.pid}')
-            return kill_proc_tree(pid=proc.pid)
-        except Exception as e:
-            log.error('Failed to kill locking process!')
-    elif num_procs > 1:
-        # will need to figure this out
-        log.error('Too many locking procs found to delete!')
+#     # check if each process has any open files containing search filename
+#     return [p for p in procs if
+#             not p.pid == pid_self and
+#             [x for x in [item.path for item in p.open_files()] if x.endswith(filename)]]
 
 
-def kill_proc_tree(pid, sig=signal.SIGTERM, include_parent=True,
-                   timeout=None, on_terminate=None):
-    """Kill a process tree (including grandchildren) with signal
-    "sig" and return a (gone, still_alive) tuple.
-    "on_terminate", if specified, is a callabck function which is
-    called as soon as a child terminates.
-    """
-    assert pid != os.getpid(), "won't kill myself"
+# def kill_sms_proc_locking(filename='zip'):
+#     procs = get_sms_proc_locking(filename)
+#     num_procs = len(procs)
 
-    parent = psutil.Process(pid)
-    children = parent.children(recursive=True)
+#     log.info(f'Found {num_procs} locking processes.')
+#     if num_procs == 1:
+#         proc = procs[0]
+#         try:
+#             log.info(f'Trying to kill process: {proc.name()}, {proc.pid}')
+#             return kill_proc_tree(pid=proc.pid)
+#         except Exception as e:
+#             log.error('Failed to kill locking process!')
+#     elif num_procs > 1:
+#         # will need to figure this out
+#         log.error('Too many locking procs found to delete!')
 
-    if include_parent:
-        children.append(parent)
 
-    for p in children:
-        p.send_signal(sig)
+# def kill_proc_tree(pid, sig=signal.SIGTERM, include_parent=True,
+#                    timeout=None, on_terminate=None):
+#     """Kill a process tree (including grandchildren) with signal
+#     "sig" and return a (gone, still_alive) tuple.
+#     "on_terminate", if specified, is a callabck function which is
+#     called as soon as a child terminates.
+#     """
+#     assert pid != os.getpid(), "won't kill myself"
 
-    gone, alive = psutil.wait_procs(children, timeout=timeout,
-                                    callback=on_terminate)
-    return (gone, alive)
+#     parent = psutil.Process(pid)
+#     children = parent.children(recursive=True)
+
+#     if include_parent:
+#         children.append(parent)
+
+#     for p in children:
+#         p.send_signal(sig)
+
+#     gone, alive = psutil.wait_procs(children, timeout=timeout,
+#                                     callback=on_terminate)
+#     return (gone, alive)
 
 
 def find_unit_sap(unit: str):

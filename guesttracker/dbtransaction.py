@@ -13,6 +13,7 @@ from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
     from guesttracker.gui.datamodel import TableDataModel
+    from guesttracker.utils.dbmodel import Base
 
 log = getlog(__name__)
 
@@ -26,7 +27,7 @@ class DBTransaction():
         ----------
         data_model : guesttracker.gui.tables.TableWidget, optional
             table model from tables.py, default None
-        dbtable : dbm.Base, optional
+        dbtable : Base, optional
             dbtable definition not instance, default None
         title : str, optional
             table view title used for converting between db and table_view column names, default None
@@ -145,7 +146,7 @@ class Row():
             i: int = None,
             col: int = None,
             keys: Dict[str, str] = None,
-            dbtable: dbm.Base = None,
+            dbtable: 'Base' = None,
             df: pd.DataFrame = None,
             title: str = None):
         """Create with either: 1. gui.Table + row, or 2. dbtable + keys/values
@@ -268,7 +269,7 @@ class Row():
         print(m)
 
 
-def get_rowset_db(irows: List[int], df: pd.DataFrame, dbtable: dbm.Base) -> List[dbm.Base]:
+def get_rowset_db(irows: List[int], df: pd.DataFrame, dbtable: 'Base') -> List['Base']:
     """Get multiple row objs from db at once based on row indexes from df
     - Results are sorted in original order of irows
     - This is used to get multiple results from db in one call (instead of having to iterate eg 10 times)
@@ -279,11 +280,11 @@ def get_rowset_db(irows: List[int], df: pd.DataFrame, dbtable: dbm.Base) -> List
         list of irows eg [2, 5, 6]
     df : pd.DataFrame
         df with all data (to get pk values)
-    dbtable : dbm.Base
+    dbtable : Base
 
     Returns
     -------
-    List[dbm.Base]
+    List[Base]
         list of db row results
     """
     pks = get_dbtable_keys(dbtable)
@@ -329,12 +330,12 @@ def get_dbtable_key_vals(dbtable, vals: dict) -> Tuple[tuple, dict]:
     return key_tuple, key_dict
 
 
-def get_dbtable_keys(dbtable: Union[dbm.Base, str]) -> list:
+def get_dbtable_keys(dbtable: Union['Base', str]) -> list:
     """Get list of dbtable keys
 
     Parameters
     ----------
-    dbtable : Union[dbm.Base, str]
+    dbtable : Union[Base, str]
         eg dbm.FactoryCampaign
 
     Returns

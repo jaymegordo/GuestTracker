@@ -9,7 +9,7 @@ from guesttracker import dt
 from guesttracker import errors as er
 from guesttracker import getlog
 from guesttracker.gui import _global as gbl
-from guesttracker.gui import delegates, gui, tables, update
+from guesttracker.gui import delegates, gui, tables
 from guesttracker.gui.dialogs import base, refreshtables
 
 # from guesttracker.gui.multithread import Worker
@@ -22,7 +22,7 @@ QDir.addSearchPath('qdark_icons', str(cf.p_res / 'images/qdark_icons'))
 
 def decorate_modules():
     # decorate all classes' methods in these modules with @e error handler
-    modules = [delegates, base, gui, refreshtables, tables, update]
+    modules = [delegates, base, gui, refreshtables, tables]
     for module in modules:
         er.decorate_all_classes(module=module)
 
@@ -33,11 +33,11 @@ def launch():
 
     app = gbl.get_qt_app()
 
-    s = QSettings('sms', 'guesttracker', app)
+    s = QSettings('hba', 'guesttracker', app)
 
-    pixmap = QPixmap(str(cf.p_res / 'images/sms_icon.png'))
+    pixmap = QPixmap(str(cf.p_res / 'images/gt_icon.png'))
     splash = QSplashScreen(pixmap, Qt.WindowType.WindowStaysOnTopHint)
-    splash.showMessage(f'SMS Event Log\nVersion {VERSION}', color=Qt.GlobalColor.white)
+    splash.showMessage(f'HBA Guest Tracker\nVersion {VERSION}', color=Qt.GlobalColor.white)
 
     # move splash screen, this is pretty janky
     try:

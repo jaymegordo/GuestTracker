@@ -70,7 +70,7 @@ log.info('**** DONE ****')
 # dont need to do this anymore.. dont need a zipped version for anything
 # if cf.is_win and a.zip:
 #     p_share = f.projectfolder / 'dist'
-#     name_exe = 'SMS Event Log.exe'
+#     name_exe = 'HBA Guest Tracker.exe'
 #     fl.copy_file(p_src=p_dist / f'{name}/{name_exe}', p_dst=p_share / name_exe, overwrite=True)
 #     log.info('Done - exe created and copied.')
 
