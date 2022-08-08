@@ -16,7 +16,7 @@ from guesttracker import functions as f
 from guesttracker import getlog
 from guesttracker.database import db
 from guesttracker.utils.exchange import combine_email_data
-from jgutils.jgutils import pandas_utils as pu
+from jgutils import pandas_utils as pu
 
 log = getlog(__name__)
 

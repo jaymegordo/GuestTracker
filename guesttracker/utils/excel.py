@@ -14,7 +14,7 @@ from guesttracker import delta, dt
 from guesttracker import functions as f
 from guesttracker import getlog
 from guesttracker import styles as st
-from jgutils.jgutils import pandas_utils as pu
+from jgutils import pandas_utils as pu
 
 if TYPE_CHECKING:
     from datetime import date

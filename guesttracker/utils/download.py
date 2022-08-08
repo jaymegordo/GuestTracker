@@ -9,8 +9,8 @@ from guesttracker import config as cf
 from guesttracker import errors as er
 from guesttracker import functions as f
 from guesttracker import getlog
-from jgutils.jgutils import fileops as flo
-from jgutils.jgutils.azureblob import BlobStorage
+from jgutils import fileops as flo
+from jgutils.azureblob import BlobStorage
 
 log = getlog(__name__)
 

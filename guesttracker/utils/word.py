@@ -17,7 +17,7 @@ from guesttracker import getlog
 from guesttracker import reports as rp
 from guesttracker import styles as st
 from guesttracker.utils import fileops as fl
-from jgutils.jgutils import fileops as jfl
+from jgutils import fileops as jfl
 
 if TYPE_CHECKING:
     from docx.text.paragraph import Paragraph

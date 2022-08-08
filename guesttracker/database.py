@@ -20,8 +20,8 @@ from guesttracker import delta, dt
 from guesttracker import errors as er
 from guesttracker import functions as f
 from guesttracker import getlog
-from jgutils.jgutils import pandas_utils as pu
-from jgutils.jgutils.secrets import SecretsManager
+from jgutils import pandas_utils as pu
+from jgutils.secrets import SecretsManager
 
 log = getlog(__name__)
 

@@ -26,7 +26,7 @@ from guesttracker import getlog
 from guesttracker.database import db
 from guesttracker.queries import FrameCracks
 from guesttracker.utils import fileops as fl
-from jgutils.jgutils import pandas_utils as pu
+from jgutils import pandas_utils as pu
 
 log = getlog(__name__)
 

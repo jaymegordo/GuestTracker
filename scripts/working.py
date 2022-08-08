@@ -10,8 +10,8 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta
 from guesttracker import getlog
 from guesttracker.database import db
 from guesttracker.utils import dbmodel as dbm
-from jgutils.jgutils import pandas_utils as pu
-from jgutils.jgutils.functions import PrettyDict as PD
+from jgutils import pandas_utils as pu
+from jgutils.functions import PrettyDict as PD
 
 log = getlog('working')
 

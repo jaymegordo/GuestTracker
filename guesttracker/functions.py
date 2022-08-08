@@ -683,7 +683,7 @@ def read_csv_firstrow(p: Path, **kw) -> pd.DataFrame:
 
 def default_data(df):
     """Default func to read csv and apply transforms"""
-    from jgutils.jgutils import pandas_utils as pu
+    from jgutils import pandas_utils as pu
     return df \
         .pipe(lower_cols) \
         .pipe(pu.parse_datecols) \
@@ -692,7 +692,7 @@ def default_data(df):
 
 def default_df(df):
     """Simple df date/int conversions to apply to any df"""
-    from jgutils.jgutils import pandas_utils as pu
+    from jgutils import pandas_utils as pu
     return df \
         .pipe(pu.parse_datecols) \
         .pipe(convert_int64)
@@ -899,7 +899,7 @@ def get_sql_filepath(name: str):
 def discord(msg, channel='orders'):
     from discord import RequestsWebhookAdapter, Webhook
 
-    from jgutils.jgutils.secrets import SecretsManager
+    from jgutils.secrets import SecretsManager
 
     df = SecretsManager('discord.csv').load.set_index('channel')
     r = df.loc[channel]
