@@ -16,7 +16,7 @@ from guesttracker import styles as st
 from guesttracker.database import db
 from guesttracker.gui.dialogs import base as dlgs
 from guesttracker.utils import dbmodel as dbm
-from jgutils import pandas_utils as pu
+from jgutils.jgutils import pandas_utils as pu
 
 log = getlog(__name__)
 

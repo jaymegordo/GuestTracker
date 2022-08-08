@@ -6,7 +6,7 @@ from guesttracker.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN  # noqa
 
 # force config to be imported first
 if True:
-    from jgutils.logger import getlog  # noqa
+    from jgutils.jgutils.logger import getlog  # noqa
 
 __version__ = '2.0.0'
 VERSION = __version__

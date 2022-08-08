@@ -13,7 +13,7 @@ from guesttracker import getlog
 from guesttracker.database import db
 from guesttracker.queries.oil import OilSamples
 from guesttracker.utils.credentials import CredentialManager
-from jgutils import pandas_utils as pu
+from jgutils.jgutils import pandas_utils as pu
 
 log = getlog(__name__)
 

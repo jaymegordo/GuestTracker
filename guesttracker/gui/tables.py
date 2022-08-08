@@ -44,7 +44,7 @@ from guesttracker.queries.hba import HBAQueryBase
 from guesttracker.utils import dbmodel as dbm
 from guesttracker.utils import email as em
 from guesttracker.utils import fileops as fl
-from jgutils import pandas_utils as pu
+from jgutils.jgutils import pandas_utils as pu
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler

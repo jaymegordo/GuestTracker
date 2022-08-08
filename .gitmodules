@@ -1,0 +1,3 @@
+[submodule "jgutils"]
+	path = jgutils
+	url = git@github.com:jaymegordo/jgutils.git

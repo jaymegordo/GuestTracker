@@ -10,7 +10,7 @@ from guesttracker import queries as qr
 # from guesttracker.reports import SMRReport
 
 if True:
-    from jgutils.secrets import SecretsManager
+    from jgutils.jgutils.secrets import SecretsManager
 
 log = getlog(__name__)
 cli = argparse.ArgumentParser()

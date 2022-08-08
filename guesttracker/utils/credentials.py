@@ -6,7 +6,7 @@ import six
 from guesttracker import functions as f
 from guesttracker import getlog, ic
 from guesttracker.config import AZURE, AZURE_WEB
-from jgutils.secrets import SecretsManager
+from jgutils.jgutils.secrets import SecretsManager
 
 log = getlog(__name__)
 

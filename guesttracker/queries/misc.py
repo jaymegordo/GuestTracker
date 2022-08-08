@@ -15,7 +15,7 @@ from guesttracker import getlog
 from guesttracker import styles as st
 from guesttracker.queries import QueryBase
 from guesttracker.queries.el import EventLogBase
-from jgutils import pandas_utils as pu
+from jgutils.jgutils import pandas_utils as pu
 
 log = getlog(__name__)
 

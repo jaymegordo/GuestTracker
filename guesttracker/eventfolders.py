@@ -13,7 +13,7 @@ from guesttracker.database import db
 from guesttracker.dbtransaction import Row
 from guesttracker.utils import fileops as fl
 from guesttracker.utils.dbmodel import EventLog
-from jgutils import pandas_utils as pu
+from jgutils.jgutils import pandas_utils as pu
 
 log = getlog(__name__)
 
