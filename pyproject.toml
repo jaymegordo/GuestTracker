@@ -21,7 +21,7 @@ xlrd = "==2.0.1"
 # exchangelib = "^4.0.0"
 openpyxl = "==3.0.10"
 joblib = "==1.1.0"
-jgutils = {path = "../jgutils", develop = true}
+jgutils = {path = "./jgutils", develop = true}
 MarkupSafe = "2.0.1"
 
 
@@ -42,7 +42,7 @@ markdown-it-py = "==0.6.2"
 QDarkStyle = "==2.8.1"
 seaborn = "0.11.2"
 Jinja2 = "==2.11.3"  # optional dep for df style
-jgutils = {path = "../jgutils", extras = [], develop = true}
+jgutils = {path = "./jgutils", extras = [], develop = true}
 
 
 [tool.poetry.group.dev.dependencies]
@@ -61,7 +61,7 @@ pre-commit = "^2.12.1"
 flake8 = "^3.9.2"
 autopep8 = "^1.5.7"
 qtsass = "^0.3.0"
-jgutils = {path = "../jgutils", extras = ["colorlogging", "azurestorage"], develop = true}
+jgutils = {path = "./jgutils", extras = ["colorlogging", "azurestorage"], develop = true}
 
 
 [tool.pyright]

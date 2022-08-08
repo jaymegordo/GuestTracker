@@ -715,7 +715,7 @@ terminaldf = ["tabulate (>=0.8.9,<0.9.0)", "lxml (>=4.7.1,<5.0.0)"]
 
 [package.source]
 type = "directory"
-url = "../jgutils"
+url = "jgutils"
 
 [[package]]
 name = "jinja2"
@@ -2097,7 +2097,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9,<3.10"
-content-hash = "a7d129401ce8c2b48e07022fe71210601964176f84e4655f30439f7fe0fc289f"
+content-hash = "a6f875069e9f463a0eccdb31ae4ab18255523e2d905de8282f71dbbd7ad66d22"
 
 [metadata.files]
 altgraph = [
