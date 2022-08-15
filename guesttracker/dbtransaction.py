@@ -3,8 +3,10 @@ from typing import *
 import pandas as pd
 import sqlalchemy as sa
 from sqlalchemy import and_, literal
+from sqlalchemy.dialects.mssql.base import DATETIME2
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.query import Query as SQLAQuery
+from sqlalchemy.sql.sqltypes import BigInteger, Boolean, Float, String
 
 from guesttracker import functions as f
 from guesttracker import getlog
@@ -12,10 +14,21 @@ from guesttracker.database import db
 from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
+    from sqlalchemy.orm.decl_api import DeclarativeMeta
+    from sqlalchemy.sql.schema import Column, Table
+
     from guesttracker.gui.datamodel import TableDataModel
     from guesttracker.utils.dbmodel import Base
 
 log = getlog(__name__)
+
+dtype_map = {
+    DATETIME2: 'date',
+    BigInteger: 'int',
+    Boolean: 'bool',
+    Float: 'text',
+    String: 'text',
+}
 
 
 class DBTransaction():
@@ -401,3 +414,22 @@ def join_query(tables, keys, join_field):
         m.update(model_dict(item, include_none=True))
 
     return m
+
+
+def get_table_model(table_name: str) -> 'Table':
+    """Get Table object from dbmodel
+
+    Parameters
+    ----------
+    table_name : str
+
+    Returns
+    -------
+    Table
+    """
+    model = getattr(dbm, table_name)  # type: DeclarativeMeta
+    return model.metadata.tables[model.__tablename__]
+
+
+def get_dtype_map(col: 'Column') -> str:
+    return dtype_map.get(col.type.__class__, 'text')

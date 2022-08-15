@@ -4,16 +4,18 @@ from typing import *
 
 from PyQt6.QtWidgets import QPushButton
 
+from guesttracker import dbtransaction as dbt
 from guesttracker import delta, dt
 from guesttracker import functions as f
 from guesttracker import getlog
 from guesttracker import queries as qr
 from guesttracker.database import db
-from guesttracker.gui import _global as gbl
 from guesttracker.gui.dialogs.base import InputField, InputForm, check_app
 
 if TYPE_CHECKING:
+
     from guesttracker.gui.formfields import CheckBox
+    from guesttracker.gui.tables import TableWidget
 
 log = getlog(__name__)
 
@@ -39,17 +41,20 @@ class RefreshTable(InputForm):
         major_components='ComponentType'
     )
 
-    def __init__(self, parent=None, **kw):
+    def __init__(self, parent: Union['TableWidget', None] = None, name: Union[str, None] = None, **kw):
 
         # initialize with proper table when called on its own for testing
         if parent is None:
+            if name is None:
+                name = self.__class__.__name__
+
             from guesttracker.gui import tables
-            parent_name = getattr(tables, self.__class__.__name__, None)
+            parent_name = getattr(tables, name, None)
             if parent_name:
                 parent = parent_name()
 
         super().__init__(parent=parent, window_title='Refresh Table', **kw)
-        self.minesite = gbl.get_minesite()
+        # self.minesite = gbl.get_minesite()
 
     def toggle(self, state: int) -> None:
 
@@ -329,6 +334,16 @@ class RefreshTable(InputForm):
             return parent.query.fltr
         else:
             return qr.EventLog().fltr  # default
+
+
+class HBABase(RefreshTable):
+
+    def __init__(self, name: str, parent: Union['TableWidget', None] = None):
+        super().__init__(parent=parent, name=name)
+        self.name = name
+
+        self.table = dbt.get_table_model(table_name=name)
+        self.add_default_fields(input_type='refresh')
 
 
 class EventLogBase(RefreshTable):

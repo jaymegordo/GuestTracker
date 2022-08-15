@@ -1,4 +1,6 @@
 import time
+import uuid
+from datetime import datetime as dt
 from typing import TYPE_CHECKING, Union
 
 from PyQt6.QtCore import QSize, Qt, pyqtSlot
@@ -21,32 +23,33 @@ if TYPE_CHECKING:
 
 
 class AddRow(InputForm):
-    def __init__(self, parent: Union['TableWidget', None], window_title='Add Item', **kw):
+    def __init__(
+            self,
+            parent: Union['TableWidget', None],
+            window_title: str = 'Add Item',
+            **kw):
         super().__init__(parent=parent, window_title=window_title, **kw)
-        m = {}  # need dict for extra cols not in dbm table model (eg UnitID)
-        queue = []
-        add_keys = []
-        row = self.create_row()  # kinda sketch, row is actually e, not dbt.Row
+        self.m = {}  # need dict for extra cols not in dbm table model (eg UnitID)
+        self.queue = []
+        self.add_keys = []
+        self.row = self.create_row()  # kinda sketch, row is actually e, not dbt.Row
 
-        self.parent = parent
-
-        f.set_self(vars())
+        self.parent = parent  # type: ignore
 
     def create_row(self) -> dbm.Base:
-        parent = self.parent  # type: TableWidget
+        parent = self.parent
         if not parent is None:
-            data_model = parent.view.data_model
-            title = parent.title
-            dbtable = parent.dbtable
+            self.data_model = parent.view.data_model
+            self.title = parent.title
+            self.dbtable = parent.dbtable
         else:
             # Temp testing vals
-            data_model = None
-            title = 'Event Log'
-            tablename = 'EventLog'
-            dbtable = getattr(dbm, tablename)
+            self.data_model = None
+            self.title = 'Event Log'
+            self.tablename = 'EventLog'
+            self.dbtable = getattr(dbm, self.tablename)
 
-        f.set_self(vars())
-        return dbtable()
+        return self.dbtable(uid=uuid.uuid4())
 
     def add_row_table(self, row, m=None):
         # convert row model to dict of values and append to current table
@@ -117,6 +120,42 @@ class AddRow(InputForm):
             + ', '.join([m.get(k, None) for k in self.add_keys])
 
         self.update_statusbar(msg, success=True)
+
+
+class HBAAddRow(AddRow):
+    def __init__(self, name: str, **kw):
+        super().__init__(**kw)
+        self.name = name
+
+        # TODO allow providing alternet types, eg combobox
+        self.add_default_fields(input_type='update')
+
+
+class Reservations(HBAAddRow):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+
+    def accept(self):
+        row = self.row
+
+        # validate unit availability
+
+        # select customer name from combobox, set to customer_id
+
+        # TODO #6 auto set deposit date based on departure date
+
+        # add "select units" button
+
+        # show unit table and allow multi select - db.get_df_units()
+
+
+class Customers(HBAAddRow):
+    def accept(self):
+        row = self.row
+        row.name = self.fields['name_first'].val + ' ' + self.fields['name_last'].val
+        row.first_contact = dt.now()
+
+        return super().accept()
 
 
 class AddEmail(AddRow):

@@ -1,4 +1,5 @@
 # %%
+import re
 import sqlite3
 import time
 import uuid
@@ -50,7 +51,8 @@ def int_fields(name, n, n0: int = 1):
 drop_cols = dict(
     Accounts=['tax2_rate'],
     ChargeItems=['tax2_rate'],
-    Charges=['exported', 'cc_kind', 'cc_number', 'cc_exp_date', 'cc_name_on_card', 'item_id', 'taken_by'],
+    Charges=['exported', 'cc_kind', 'cc_number', 'cc_exp_date',
+             'cc_name_on_card', 'item_id', 'taken_by', 'charge_time'],
     Customers=['email2', 'next_stay', 'other_names', 'name_prefix', 'addr2_1', 'addr2_2', 'city_state_zip_1', 'company_2', 'city_2', 'country_2',
                'state_2', 'zip_2', 'city_state_zip_2', 'fax_phone', 'call_back', 'name', 'all_interests', 'first_last', 'last_stay', 'primary_address'] + int_fields('user_field', 6),
     Packages=['plan', 'rate2', 'extra_person_charge', 'nights', 'minimum_nights', 'service_charge_percent',
@@ -97,6 +99,8 @@ foreign_keys = dict(
     Reservations=dict(customer_id='Customers'),
     Units=dict(class_id='Classes'),
 )
+
+# %%
 
 dfs_proc = {}
 for table in tables:
@@ -173,6 +177,56 @@ for table in tables:
 
 db.safe_commit()
 
+# %% - convert datetime to datetime2
+sql = """
+select schema_name(tab.schema_id) as schema_name,
+    tab.name as table_name,
+    col.column_id,
+    col.name as column_name,
+    t.name as data_type,
+    col.max_length,
+    col.precision
+from sys.tables as tab
+    inner join sys.columns as col
+        on tab.object_id = col.object_id
+    left join sys.types as t
+    on col.user_type_id = t.user_type_id
+order by schema_name,
+    table_name,
+    column_name;
+"""
+df = pd.read_sql(sql=sql, con=db.engine)
+expr = r'uid|_id$'
+
+for row in df.itertuples():
+    table_name = row.table_name
+    data_type = row.data_type
+    column_name = row.column_name
+
+    if data_type == 'datetime':
+        sql = f'alter table {table_name} alter column {column_name} datetime2(0);'
+        log.info(sql)
+        db.safe_execute(sql)
+
+    if re.search(expr, column_name):
+        null_cond = 'not null' if column_name == 'uid' else ''
+        sql = f'alter table {table_name} alter column {column_name} varchar(36) {null_cond};'
+        log.info(sql)
+        db.safe_execute(sql)
+
+db.safe_commit()
+
+# %% - Set foreign keys
+for table_name, m_fk in foreign_keys.items():
+    for col, table_rel in m_fk.items():
+        sql = f'ALTER TABLE [dbo].[{table_name}] ADD FOREIGN KEY ([{col}]) REFERENCES [dbo].[{table_rel}] ([uid]);'
+        log.info(sql)
+        db.safe_execute(sql)
+
+db.safe_commit()
+
+# %%
+
 # %% - make table key vals for config.yaml
 
 models = {k: v for k, v in dbm.__dict__.items() if isinstance(v, DeclarativeMeta) and k != 'Base'}
@@ -195,3 +249,16 @@ df
 tables = c.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
 tables = [r[0] for r in tables]
 tables
+
+# %%
+# check all column types in all tables
+model = dbm.Base
+col_types = []
+
+for table_name, table in model.metadata.tables.items():
+    for column in table.columns:
+        print(table_name, column.name, column.type)
+        col_types.append(type(column.type))
+
+set(col_types)
+# %%

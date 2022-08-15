@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (
     QStyleOptionTab, QStylePainter, QTabBar, QTableWidget, QTableWidgetItem,
     QTabWidget, QTextBrowser, QTextEdit, QTreeView, QVBoxLayout, QWidget)
 
-from guesttracker import VERSION
+from guesttracker import VERSION, StrNone
 from guesttracker import config as cf
 from guesttracker import dbtransaction as dbt
 from guesttracker import delta, dt
@@ -29,10 +29,14 @@ from guesttracker import queries as qr
 from guesttracker.database import db
 from guesttracker.gui import _global as gbl
 from guesttracker.gui import formfields as ff
+from guesttracker.utils import dbconfig as dbc
 from guesttracker.utils import fileops as fl
+from jgutils import pandas_utils as pu
 
 if TYPE_CHECKING:
-    from guesttracker.gui.tables import TableView
+    from sqlalchemy.sql.schema import Column, ForeignKey, Table
+
+    from guesttracker.gui.tables import TableView, TableWidget
     from guesttracker.queries import Filter
 
 log = getlog(__name__)
@@ -42,6 +46,9 @@ def add_items_to_filter(field: 'InputField', fltr: 'Filter'):
     """Add field items to query filter
     - Can be called from dialog, or table's persistent filter"""
     if field.box.isEnabled():
+        if field.dtype == 'text' and field.val == '':
+            return
+
         print(f'adding input | field={field.col_db}, table={field.table}')
         fltr.add(field=field.col_db, val=field.val, table=field.table, opr=field.opr)
 
@@ -61,7 +68,7 @@ class InputField():
             exclude_filter: bool = False,
             func: Union[Callable, None] = None):
 
-        self.text = text
+        self.text = pu.to_title(text)
         self.name = text.replace(' ', '')
 
         if col_db is None:
@@ -113,7 +120,7 @@ class BaseDialog(QDialog):
         self.parent = parent
         self.mainwindow = gbl.get_mainwindow()
         self.settings = gbl.get_settings()
-        self.minesite = gbl.get_minesite()
+        # self.minesite = gbl.get_minesite()
         self.mw = self.mainwindow
         self.v_layout = QVBoxLayout(self)
 
@@ -149,26 +156,32 @@ class InputForm(BaseDialog):
 
     def __init__(
             self,
-            parent=None,
+            parent: Union['TableWidget', None] = None,
             enforce_all: bool = False,
             max_combo_width: int = 300,
             use_saved_settings: bool = True,
+            name: StrNone = None,
             **kw):
         super().__init__(parent=parent, **kw)
-        name = self.__class__.__name__
-        _names_to_avoid = ('minesite_qcombobox',)  # always want to use 'current' minesite
-        _save_items = tuple()
+
+        if name is None:
+            name = self.__class__.__name__
+
+        self.name = name
+        self._names_to_avoid = ('minesite_qcombobox',)  # always want to use 'current' minesite
+        self._save_items = tuple()
 
         # NOTE could make formlayout reusable other places (eg oil samples in failure report)
-        form_layout = FormLayout()
-        self.v_layout.addLayout(form_layout)
+        self.form_layout = FormLayout()
+        self.v_layout.addLayout(self.form_layout)
         self.fields = {}  # type: Dict[str, InputField]
-        items = None
+        self.items = None
+        self.parent = parent
+        self.enforce_all = enforce_all
+        self.max_combo_width = max_combo_width
+        self.use_saved_settings = use_saved_settings
 
         add_okay_cancel(dlg=self, layout=self.v_layout)
-        f.set_self(vars())
-
-        self.use_saved_settings = use_saved_settings
 
     def exec(self):
         """Loop form fields and filter active (cb checked) fields"""
@@ -292,6 +305,8 @@ class InputForm(BaseDialog):
             box = ff.TimeEdit()  # NOTE not used
         elif dtype == 'datetime':
             box = ff.DateTimeEdit()
+        elif dtype == 'bool':
+            box = ff.ComboBox(items=['True', 'False'])
         else:
             raise ValueError(f'Incorrect dtype: {dtype}')
 
@@ -300,6 +315,10 @@ class InputForm(BaseDialog):
         field.box_layout = box_layout
         box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         box.set_name(name=text)
+
+        if dtype == 'text':
+            checkbox = False
+            enabled = True
 
         # add checkbox to form line to enable/disable field
         if checkbox:
@@ -325,7 +344,7 @@ class InputForm(BaseDialog):
         field.box = box
         box.field = field
         field.set_default()
-        self.fields[field.name] = field
+        self.fields[field.col_db] = field
 
         if not box_changed is None:
             box.changed.connect(box_changed)
@@ -375,6 +394,51 @@ class InputForm(BaseDialog):
         else:
             # doesn't have a checkbox, always active
             return True
+
+    def add_default_fields(self, input_type: str = 'refresh'):
+
+        # get column names from dbmodel.py
+        table = dbt.get_table_model(table_name=self.name)
+
+        kw = {}
+        if input_type == 'refresh':
+            kw['checkbox'] = True
+            kw['cb_enabled'] = False
+            exclude_check_field = 'exclude_refresh_fields'
+            enforce_fields = []
+        elif input_type == 'update':
+            enforce_fields = dbc.table_data[self.name].get('add_enforce', [])
+            exclude_check_field = 'exclude_add_fields'
+        else:
+            raise ValueError(f'Incorrect input_type: {input_type}')
+
+        for col in table.columns:
+            exclude = ['uid'] + dbc.table_data[self.name].get(exclude_check_field, [])
+            col = col  # type: Column
+            text = col.name
+
+            # check if col has a foreign key
+            fks = list(col.foreign_keys)
+            if fks:
+                # assume only one fk for now
+                fk = fks[0]  # type: ForeignKey
+                col_rel = fk.column
+                table_rel = fk.column.table  # type: Table
+
+                # use "name" column as column to add filter for instead of uid
+                text = col.name.replace('_id', ' _name')
+                col = table_rel.columns.get('name', None)  # type: Column
+
+            # add filter for column
+            if not col is None and not col.name in exclude:
+                self.add_input(
+                    field=InputField(
+                        text=pu.to_title(text),
+                        col_db=col.name,
+                        table=col.table.name,
+                        dtype=dbt.get_dtype_map(col),
+                        enforce=input_type == 'update' and col.name in enforce_fields),
+                    **kw)
 
     def check_enforce_items(self):
         """Loop all enforceable fields, make sure vals arent blank/default"""
@@ -1468,14 +1532,14 @@ class Preferences(BaseDialog):
                 read_only=dict(
                     default=False,
                     tooltip='Prevent app from updating any values in database.'),
-                minesite=dict(
-                    default='FortHills',
-                    items=db.get_list_minesite()),
-                custom_minesites=dict(
-                    cls=ff.MultiSelectList,
-                    items=db.get_list_minesite(include_custom=False),
-                    tooltip='Define list of multiple minesites to be returned in queries'
-                    + ' when current minesite = "CustomSites".'),
+                # minesite=dict(
+                #     default='FortHills',
+                #     items=db.get_list_minesite()),
+                # custom_minesites=dict(
+                #     cls=ff.MultiSelectList,
+                #     items=db.get_list_minesite(include_custom=False),
+                #     tooltip='Define list of multiple minesites to be returned in queries'
+                #     + ' when current minesite = "CustomSites".'),
             ),
             Appearance=dict(
                 font_size=dict(
@@ -1488,36 +1552,37 @@ class Preferences(BaseDialog):
                     items=available_tabs,
                     tooltip='Define list of visible tabs. Must restart app for changes to take effect.'),
             ),
-            Events=dict(
-                close_wo_with_event=dict(
-                    default=False,
-                    label='Close Work Order with Event',
-                    tooltip='Set WO status to "Closed" when Event is closed and vice versa.'),
-                wo_request_folder=dict(
-                    default='WO Request',
-                    label='WO Request Email Folder',
-                    tooltip='Specify the folder in your Outlook app to search for new WO request emails.'
-                    + ' (Case insensitive).'
-                )
-            ),
-            TSI=dict(
-                open_downloads_folder=dict(
-                    default=False,
-                    tooltip='Open downloads folder in addition to event folder on "View Folder" command.'),
-                save_tsi_pdf=dict(
-                    default=False,
-                    label='Save TSI PDF',
-                    tooltip='Auto save PDF of TSI to event folder after created.')
-            ),
+            # Events=dict(
+            #     close_wo_with_event=dict(
+            #         default=False,
+            #         label='Close Work Order with Event',
+            #         tooltip='Set WO status to "Closed" when Event is closed and vice versa.'),
+            #     wo_request_folder=dict(
+            #         default='WO Request',
+            #         label='WO Request Email Folder',
+            #         tooltip='Specify the folder in your Outlook app to search for new WO request emails.'
+            #         + ' (Case insensitive).'
+            #     )
+            # ),
+            # TSI=dict(
+            #     open_downloads_folder=dict(
+            #         default=False,
+            #         tooltip='Open downloads folder in addition to event folder on "View Folder" command.'),
+            #     save_tsi_pdf=dict(
+            #         default=False,
+            #         label='Save TSI PDF',
+            #         tooltip='Auto save PDF of TSI to event folder after created.'
+            #         )
+            # ),
             Advanced=dict(
-                dev_channel=dict(
-                    default=False,
-                    label='Alpha Update Channel',
-                    tooltip='Get alpha updates (potentially unstable).'),
-                is_admin=dict(
-                    default=False,
-                    label='Owner',
-                    tooltip='Set user to owner status to unlock specific tabs.'),
+                # dev_channel=dict(
+                #     default=False,
+                #     label='Alpha Update Channel',
+                #     tooltip='Get alpha updates (potentially unstable).'),
+                # is_admin=dict(
+                #     default=False,
+                #     label='Owner',
+                #     tooltip='Set user to owner status to unlock specific tabs.'),
                 show_query_time=dict(
                     default=False,
                     tooltip='Show detailed query/display time in statusbar. Useful for troubleshooting slow queries.'
@@ -1527,7 +1592,7 @@ class Preferences(BaseDialog):
 
         # cant update mw in testing
         if not parent is None:
-            settings_conf['General']['minesite']['funcs'] = self.mw.update_minesite_label
+            # settings_conf['General']['minesite']['funcs'] = self.mw.update_minesite_label
             settings_conf['Appearance']['font_size']['funcs'] = gbl.set_font_size
 
         tabs = VerticalTabs(self)

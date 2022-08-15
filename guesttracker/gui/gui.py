@@ -839,7 +839,7 @@ class TabWidget(QTabWidget):
     def available_tabs(user: Union[users.User, None]) -> List[str]:
         """Return list of available tabs based on user"""
         lst = list(cf.config['Headers'].keys())  # default use all named tables
-        exclude = []
+        exclude = ['Package Units']
 
         if not user is None:
             # Hide specific tabs per usergroup/domain
@@ -858,8 +858,8 @@ class TabWidget(QTabWidget):
         available_tabs = TabWidget.available_tabs(user=self.mainwindow.u)
         visible_tabs = self.mainwindow.get_setting('visible_tabs', default=available_tabs)
 
-        for i, name in enumerate(visible_tabs):
-            self.init_tab(name=name, i=i)
+        for i, title in enumerate(visible_tabs):
+            self.init_tab(title=title, i=i)
 
         self.is_init = True
 

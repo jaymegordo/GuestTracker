@@ -34,6 +34,7 @@ from guesttracker.gui.datamodel import TableDataModel
 from guesttracker.gui.delegates import (
     CellDelegate, ComboDelegate, DateDelegate, DateTimeDelegate,
     HighlightCellDelegate, TimeDelegate)
+from guesttracker.gui.dialogs import addrows as adr
 from guesttracker.gui.dialogs import base as dlgs
 from guesttracker.gui.dialogs import refreshtables as rtbls
 from guesttracker.gui.dialogs.addrows import (
@@ -41,6 +42,7 @@ from guesttracker.gui.dialogs.addrows import (
 from guesttracker.gui.dialogs.tables import ACInspectionsDialog, UnitSMRDialog
 from guesttracker.gui.multithread import Worker
 from guesttracker.queries.hba import HBAQueryBase
+from guesttracker.utils import dbconfig as dbc
 from guesttracker.utils import dbmodel as dbm
 from guesttracker.utils import email as em
 from guesttracker.utils import fileops as fl
@@ -979,7 +981,7 @@ class TableWidget(QWidget):
         v_layout.addLayout(btnbox)
 
         # get default refresh dialog from refreshtables by name
-        self.refresh_dialog = getattr(rtbls, name, rtbls.RefreshTable)  # type: Type[rtbls.RefreshTable]
+        self.refresh_dialog = getattr(rtbls, name, rtbls.HBABase)  # type: Type[rtbls.RefreshTable]
 
         self.query = getattr(qr, name, HBAQueryBase)(parent=self, theme='dark', name=self.name)
         self.dbtable = self.query.update_table  # type: dbm.Base
@@ -1065,7 +1067,7 @@ class TableWidget(QWidget):
 
     def show_refresh(self, *args, **kw):
         """Show RefreshTable dialog and restore prev settings"""
-        dlg = self.refresh_dialog(parent=self)
+        dlg = self.refresh_dialog(parent=self, name=self.name)
         dlg.exec()
 
     def show_details(self):
@@ -1319,7 +1321,7 @@ class TableWidget(QWidget):
         m = {k: getattr(e, k, None) for k in warn_keys}
         m_pretty = f.pretty_dict(m)
 
-        msg = f'Are you sure you would like to permanently delete the {name.lower()}:\n\n{m_pretty}'
+        msg = f'Are you sure you would like to permanently delete the {name.lower()} record:\n\n{m_pretty}'
 
         if dlgs.msgbox(msg=msg, yesno=True):
             if row.update(delete=True):
@@ -1446,7 +1448,15 @@ class HBATableWidget(TableWidget):
             self.mcols['hide'] = ('uid',)
 
     def show_addrow(self):
-        pass
+        cls = getattr(adr, self.name, adr.HBAAddRow)
+        dlg = cls(parent=self, name=self.name)
+        dlg.exec()
+
+    def remove_row(self):
+        """Remove selected part from database
+        """
+        warn_keys = dbc.table_data[self.name].get('warn_delete_fields', ['name'])
+        self._remove_row(name=self.name, warn_keys=warn_keys)
 
 
 class EventLogBase(TableWidget):

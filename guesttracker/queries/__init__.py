@@ -17,6 +17,7 @@ from guesttracker import getlog
 from guesttracker import styles as st
 from guesttracker.database import db
 from guesttracker.errors import SettingsError
+from guesttracker.utils import dbconfig as dbc
 from guesttracker.utils import dbmodel as dbm
 
 if not cf.AZURE_WEB:
@@ -344,6 +345,18 @@ class QueryBase(metaclass=ABCMeta):
         self.fltr = Filter(parent=self)
         self.fltr2 = Filter(parent=self)
 
+    def filter_last_dates(self, date_col: str, n_days: int = 365) -> None:
+        """Filter on last n_days.
+        - NOTE pass in table name maybe
+        Parameters
+        ----------
+        n_days : int, optional
+            Number of days to filter on, by default -365
+        """
+        a = self.a
+        ct = (a[date_col] >= dt.now() + delta(days=-n_days))
+        self.fltr.add(ct=ct)
+
     def set_lastperiod(self, days=7):
         if hasattr(self, 'date_col') and not self.date_col is None:
             vals = {self.date_col: dt.now().date() + delta(days=days * -1)}
@@ -406,11 +419,20 @@ class QueryBase(metaclass=ABCMeta):
 
         return self
 
-    def process_df(self, df):
+    def sort_primary_date(self, df: pd.DataFrame) -> pd.DataFrame:
+        primary_date_col = dbc.table_data.get(self.name, {}).get('primary_date', None)
+        """Sort primary date column by date, ascending"""
+        if not primary_date_col is None:
+            df = df.sort_values(by=primary_date_col, ascending=False) \
+                .reset_index(drop=True)
+
+        return df
+
+    def process_df(self, df: pd.DataFrame) -> pd.DataFrame:
         """Placeholder for piping"""
         return df
 
-    def _process_df(self, df, do=True):
+    def _process_df(self, df: pd.DataFrame, do: bool = True) -> pd.DataFrame:
         """Wrapper to allow skipping process_df for testing/troubleshooting"""
         if do:
             return df.pipe(self.process_df)
@@ -418,13 +440,13 @@ class QueryBase(metaclass=ABCMeta):
             return df
 
     @property
-    def df(self):
+    def df(self) -> pd.DataFrame:
         if not self.df_loaded:
             self.get_df()
         return self._df
 
     @df.setter
-    def df(self, data):
+    def df(self, data: pd.DataFrame):
         self._df = data
 
     def _get_df(self, default=False, base=False, prnt=False, skip_process=False, **kw) -> pd.DataFrame:
@@ -455,6 +477,7 @@ class QueryBase(metaclass=ABCMeta):
         return pd \
             .read_sql(sql=sql, con=db.engine) \
             .pipe(f.default_df) \
+            .pipe(self.sort_primary_date) \
             .pipe(f.convert_df_view_cols, m=self.view_cols) \
             .pipe(self._process_df, do=not skip_process) \
             .pipe(f.set_default_dtypes, m=self.default_dtypes)

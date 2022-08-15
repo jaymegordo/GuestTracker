@@ -91,6 +91,7 @@ TableName:
 Headers:
     Reservations:
         uid: uid
+        Customer Name: customer_name
         Status: status
         Unit Assignments: unit_assignments
         Arrival Date: arrival_date
@@ -138,11 +139,11 @@ Headers:
         Includes Tax: includes_tax
     Charges:
         uid: uid
+        Customer Name: customer_name
         Kind: kind
         Sub Kind: sub_kind
         Item: item
         Charge Date: charge_date
-        Charge Time: charge_time
         Posting Date: posting_date
         Quantity: quantity
         Pre Tax Price: pre_tax_price
@@ -164,12 +165,14 @@ Headers:
         Name: name
         Description: description
         Rate: rate
+        Account Name: account_name
     Units:
         uid: uid
         Name: name
         Abbr: abbr
         Max Persons: max_persons
         Active: active
+        Class Name: class_name
 
 Platform:
     mac:

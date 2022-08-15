@@ -1,6 +1,7 @@
 from datetime import date  # noqa
 from datetime import datetime as dt  # noqa
 from datetime import timedelta as delta  # noqa
+from typing import Union  # noqa
 
 from guesttracker.config import AZURE_WEB, IS_QT_APP, SYS_FROZEN  # noqa
 
@@ -20,3 +21,5 @@ try:
     ic.configureOutput(prefix='')
 except Exception as e:
     ic = lambda *args: print(*args)  # noqa
+
+StrNone = Union[str, None]
