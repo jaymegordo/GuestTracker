@@ -1,6 +1,7 @@
 import functools
 import socket
 from typing import *
+from typing import TYPE_CHECKING
 from urllib import parse
 
 import pandas as pd
@@ -22,6 +23,9 @@ from guesttracker import functions as f
 from guesttracker import getlog
 from jgutils import pandas_utils as pu
 from jgutils.secrets import SecretsManager
+
+if TYPE_CHECKING:
+    from guesttracker.utils.dbmodel import Base
 
 log = getlog(__name__)
 
@@ -83,7 +87,7 @@ def get_db_creds() -> Dict[str, str]:
         return m
     else:
         # raise error to user
-        from guesttracker.gui.dialogs.base import msg_simple
+        from guesttracker.gui.dialogs.dialogbase import msg_simple
         msg = 'No database drivers available, please download "ODBC Driver 17 for SQL Server" (or newer) from:\n\n \
         https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15'
         msg_simple(icon='critical', msg=msg)
@@ -375,7 +379,7 @@ class DB(object):
     def __exit__(self, *args):
         self.close()
 
-    def add_row(self, row):
+    def add_row(self, row: 'Base'):
         """Simple add single row to database.
         - Row must be created with sqlalchemy model
         """
@@ -650,11 +654,22 @@ class DB(object):
 
         return df
 
+    def get_df_customers(self) -> pd.DataFrame:
+        name = 'customers'
+        df = self.get_df_saved(name)
+
+        if df is None:
+            from guesttracker.queries.hba import HBAQueryBase
+            query = HBAQueryBase(name='Customers')
+            df = query.get_df() \
+                .pipe(pu.lower_cols)
+
+            self.save_df(df, name)
+
+        return df
+
     def get_df_unit(
             self,
-            minesite: Union[str, None] = None,
-            model: Union[str, None] = None,
-            force: bool = False,
             **kw) -> pd.DataFrame:
         """Return df of all units in database
 
@@ -675,25 +690,31 @@ class DB(object):
         df = self.get_df_saved(name)
 
         # load if doesn't exist
-        if df is None or force:
-            a, b = pk.Tables('UnitID', 'EquipType')
-            cols = [a.MineSite, a.Customer, a.Model, a.Unit, a.Serial,
-                    a.DeliveryDate, b.EquipClass, b.ModelBase, a.is_component]
-            q = Query.from_(a).select(*cols) \
-                .left_join(b).on_field('Model')
-
-            df = pd.read_sql(sql=q.get_sql(), con=self.engine) \
-                .set_index('Unit', drop=False) \
-                .pipe(pu.parse_datecols)
+        if df is None:
+            from guesttracker.queries.hba import HBAQueryBase
+            query = HBAQueryBase(name='Units')
+            df = query.get_df()
 
             self.save_df(df, name)
 
-        # sometimes need to filter other minesites due to serial number duplicates
-        if not minesite is None:
-            df = df[df.MineSite == minesite].copy()
+        return df
 
-        if not model is None:
-            df = df[df.Model.str.contains(model)]
+    def get_df_reservations(self) -> pd.DataFrame:
+        name = 'reservations'
+        df = self.get_df_saved(name)
+
+        if df is None:
+            # from guesttracker.queries.hba import HBAQueryBase
+            # query = HBAQueryBase(name='Reservations')
+
+            a = pk.Table('Reservations')
+            q = Query.from_(a)
+
+            df = pd.read_sql(sql=q.get_sql(), con=db.engine) \
+                .assign(unit_assignments=lambda x: x.unit_assignments.str.split(',')).explode('unit_assignments') \
+                .rename(columns=dict(unit_assignments='unit'))
+
+            self.save_df(df, name)
 
         return df
 

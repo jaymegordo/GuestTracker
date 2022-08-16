@@ -12,7 +12,7 @@ from guesttracker import functions as f
 from guesttracker import getlog
 
 if TYPE_CHECKING:
-    from guesttracker.gui.dialogs.base import InputField
+    from guesttracker.gui.dialogs.dialogbase import InputField
 
 log = getlog(__name__)
 
@@ -314,12 +314,13 @@ class SpinBox(QSpinBox, FormFields):
         if not range is None:
             self.setRange(*range)
 
-    @FormFields.val.getter
-    def val(self):
-        # Always return None instead of 0
-        # NOTE this may need to change but is good for now
-        v = super().val
-        return v if not v == 0 else None
+    # @FormFields.val.getter
+    # def val(self):
+    #     """Always return None instead of 0
+    #     NOTE this may need to change but is good for now
+    #     """
+    #     v = super().val
+    #     return v if not v == 0 else None
 
 
 class MultiSelectList(QListWidget, FormFields):

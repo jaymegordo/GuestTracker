@@ -10,7 +10,8 @@ from guesttracker import functions as f
 from guesttracker import getlog
 from guesttracker import queries as qr
 from guesttracker.database import db
-from guesttracker.gui.dialogs.base import InputField, InputForm, check_app
+from guesttracker.gui.dialogs.dialogbase import (
+    InputField, InputForm, check_app)
 
 if TYPE_CHECKING:
 

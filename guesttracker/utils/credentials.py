@@ -44,7 +44,7 @@ class CredentialManager(object):
         if gui:
             # if gui, will need dialogs for prompts
             from guesttracker.gui import _global as gbl
-            from guesttracker.gui.dialogs import base as dlgs
+            from guesttracker.gui.dialogs import dialogbase as dlgs
             from guesttracker.gui.dialogs import passwords as pw
             self.dlgs = dlgs
 

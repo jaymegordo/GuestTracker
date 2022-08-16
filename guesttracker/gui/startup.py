@@ -10,7 +10,7 @@ from guesttracker import errors as er
 from guesttracker import getlog
 from guesttracker.gui import _global as gbl
 from guesttracker.gui import delegates, gui, tables
-from guesttracker.gui.dialogs import base, refreshtables
+from guesttracker.gui.dialogs import dialogbase, refreshtables
 
 # from guesttracker.gui.multithread import Worker
 
@@ -22,7 +22,7 @@ QDir.addSearchPath('qdark_icons', str(cf.p_res / 'images/qdark_icons'))
 
 def decorate_modules():
     # decorate all classes' methods in these modules with @e error handler
-    modules = [delegates, base, gui, refreshtables, tables]
+    modules = [delegates, dialogbase, gui, refreshtables, tables]
     for module in modules:
         er.decorate_all_classes(module=module)
 

@@ -294,7 +294,7 @@ class EventFolder(UnitFolder):
         bool
             True if folder exists or replace was successful.
         """
-        from guesttracker.gui.dialogs import base as dlgs
+        from guesttracker.gui.dialogs import dialogbase as dlgs
         if not fl.drive_exists(**kw):
             return
 
@@ -360,7 +360,7 @@ class EventFolder(UnitFolder):
             print(f'num pics updated in db: {num_pics}')
 
     def create_folder(self, show=True, ask_show=False):
-        from guesttracker.gui.dialogs import base as dlgs
+        from guesttracker.gui.dialogs import dialogbase as dlgs
         fl.drive_exists()
 
         try:

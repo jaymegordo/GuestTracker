@@ -304,7 +304,7 @@ class Report(object):
         p = p_base / f'{self.title}.{self.ext}'
 
         if p.exists():
-            from guesttracker.gui.dialogs.base import msgbox
+            from guesttracker.gui.dialogs.dialogbase import msgbox
             msg = f'File "{p.name}" already exists. Overwrite?'
             return msgbox(msg=msg, yesno=True)
 

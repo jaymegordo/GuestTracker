@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QLabel
 
-from guesttracker.gui.dialogs.base import InputField, InputForm
+from guesttracker.gui.dialogs.dialogbase import InputField, InputForm
 
 
 class PasswordPrompt(InputForm):

@@ -1,7 +1,7 @@
 import time
 import uuid
 from datetime import datetime as dt
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 from PyQt6.QtCore import QSize, Qt, pyqtSlot
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton
@@ -9,17 +9,20 @@ from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton
 from guesttracker import config as cf
 from guesttracker import dbtransaction as dbt
 from guesttracker import functions as f
+from guesttracker import getlog
 from guesttracker.data import factorycampaign as fc
 from guesttracker.database import db
 from guesttracker.gui import _global as gbl
 from guesttracker.gui import formfields as ff
-from guesttracker.gui.dialogs.base import (
+from guesttracker.gui.dialogs.dialogbase import (
     InputField, InputForm, add_linesep, msg_simple, unit_exists)
 from guesttracker.gui.dialogs.tables import UnitOpenFC
 from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
     from guesttracker.gui.tables import TableWidget
+
+log = getlog(__name__)
 
 
 class AddRow(InputForm):
@@ -29,12 +32,12 @@ class AddRow(InputForm):
             window_title: str = 'Add Item',
             **kw):
         super().__init__(parent=parent, window_title=window_title, **kw)
-        self.m = {}  # need dict for extra cols not in dbm table model (eg UnitID)
+        self.m = {}  # type: Dict[str, Any] # need dict for extra cols not in dbm table model (eg UnitID)
         self.queue = []
         self.add_keys = []
-        self.row = self.create_row()  # kinda sketch, row is actually e, not dbt.Row
+        self.row = self.create_row()  # kinda sketch, row is actually dmb.Base, not dbt.Row
 
-        self.parent = parent  # type: ignore
+        self.parent = parent  # type: TableWidget
 
     def create_row(self) -> dbm.Base:
         parent = self.parent
@@ -51,12 +54,18 @@ class AddRow(InputForm):
 
         return self.dbtable(uid=uuid.uuid4())
 
-    def add_row_table(self, row, m=None):
-        # convert row model to dict of values and append to current table
-        if m is None:
-            m = self.m
+    def add_row_table(self, row: dbm.Base, m: Union[Dict[str, Any], None] = None) -> None:
+        """Convert row model to dict of values and append to current table without updating db
 
-        m.update(dbt.model_dict(model=row))
+        Parameters
+        ----------
+        row : dbm.Base
+        m : Union[Dict[str, Any], None], optional
+            alternate/modified dict to insert to table, default None
+        """
+        m = m or self.m
+
+        m |= dbt.model_dict(model=row)
         m = f.convert_dict_db_view(title=self.title, m=m, output='view')
 
         if not self.data_model is None:
@@ -74,16 +83,19 @@ class AddRow(InputForm):
             .add_items(update_items=update_items) \
             .update_all(operation_type='insert')
 
-    def set_row_attrs(self, row, exclude=None):
+    def set_row_attrs(self, row: dbm.Base, exclude: Union[List[str], None] = None) -> None:
         """Copy values to dbmodel from current dialog field values"""
         if exclude is None:
             exclude = []
         elif not isinstance(exclude, list):
             exclude = [exclude]
 
-        for field in self.fields.values():
-            if not field.text in exclude and field.box.isEnabled():
-                setattr(row, field.col_db, field.val)
+        # create dict of values to set from dialog fields
+        vals = {field.col_db: field.val
+                for field in self.fields.values()
+                if not field.isna and not field.text in exclude and field.box.isEnabled()}
+
+        row = dbt.set_row_vals(model=row, vals=vals)
 
     def accept_2(self):
         # not sure if need this yet
@@ -124,10 +136,9 @@ class AddRow(InputForm):
 
 class HBAAddRow(AddRow):
     def __init__(self, name: str, **kw):
-        super().__init__(**kw)
+        super().__init__(window_title=f'Add {name}', use_saved_settings=False, **kw)
         self.name = name
 
-        # TODO allow providing alternet types, eg combobox
         self.add_default_fields(input_type='update')
 
 
@@ -135,25 +146,36 @@ class Reservations(HBAAddRow):
     def __init__(self, **kw):
         super().__init__(**kw)
 
+        self.df_cust = db.get_df_customers()
+
+        self.add_input(
+            field=InputField(
+                text='Customer Name',
+                col_db='customer_id',
+                enforce=True,
+            ),
+            items=f.clean_series(self.df_cust['name']),
+        )
+
     def accept(self):
         row = self.row
+        row.status = 6  # TODO change this
+        self.m['customer_name'] = self.fields_db['customer_id'].val
 
-        # validate unit availability
-
-        # select customer name from combobox, set to customer_id
-
-        # TODO #6 auto set deposit date based on departure date
+        # show unit table and allow multi select - db.get_df_units()
 
         # add "select units" button
 
-        # show unit table and allow multi select - db.get_df_units()
+        # validate unit availability
+
+        return super().accept()
 
 
 class Customers(HBAAddRow):
     def accept(self):
         row = self.row
-        row.name = self.fields['name_first'].val + ' ' + self.fields['name_last'].val
-        row.first_contact = dt.now()
+        row.name = self.fields_db['name_first'].val + ' ' + self.fields_db['name_last'].val
+        row.first_contact = dt.now().date()
 
         return super().accept()
 

@@ -23,3 +23,4 @@ except Exception as e:
     ic = lambda *args: print(*args)  # noqa
 
 StrNone = Union[str, None]
+IntNone = Union[int, None]

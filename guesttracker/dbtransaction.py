@@ -15,7 +15,7 @@ from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
     from sqlalchemy.orm.decl_api import DeclarativeMeta
-    from sqlalchemy.sql.schema import Column, Table
+    from sqlalchemy.sql.schema import Column, ForeignKey, Table
 
     from guesttracker.gui.datamodel import TableDataModel
     from guesttracker.utils.dbmodel import Base
@@ -323,16 +323,32 @@ def get_rowset_db(irows: List[int], df: pd.DataFrame, dbtable: 'Base') -> List['
     return [m_result[k] for k in ordered_keys]
 
 
-def select_row_by_secondary(dbtable, col, val):
-    """Select single row from table by attr other than pk"""
+def select_row_by_secondary(dbtable: 'Table', col: str, val: Any) -> Union['Base', None]:
+    """Select single row from table by attr other than pk
+
+    Parameters
+    ----------
+    dbtable : Table
+        table to select from
+    col : str
+        column to select by
+    val : Any
+        value to match on
+
+    Returns
+    -------
+    Union['Base', None]
+        row object if found, else None
+    """
     try:
-        func = db.session.query(dbtable).filter(getattr(dbtable, col) == val).one
+        col = dbtable.columns[col]  # type: Column
+        func = db.session.query(dbtable).filter(col == val).one
         return db.safe_func(func, expected_exceptions=NoResultFound)
     except NoResultFound:
         return None
 
 
-def get_dbtable_key_vals(dbtable, vals: dict) -> Tuple[tuple, dict]:
+def get_dbtable_key_vals(dbtable: 'DeclarativeMeta', vals: Dict[str, Any]) -> Tuple[tuple, dict]:
     """Return tuple of one or more keys in dbtable, given dict of all vals (including keys)
 
     - used for update queue so far
@@ -343,7 +359,7 @@ def get_dbtable_key_vals(dbtable, vals: dict) -> Tuple[tuple, dict]:
     return key_tuple, key_dict
 
 
-def get_dbtable_keys(dbtable: Union['Base', str]) -> list:
+def get_dbtable_keys(dbtable: Union['Base', str]) -> List[str]:
     """Get list of dbtable keys
 
     Parameters
@@ -365,7 +381,7 @@ def get_dbtable_keys(dbtable: Union['Base', str]) -> list:
     return dbtable.__table__.primary_key.columns.keys()
 
 
-def print_model(model, include_none=False):
+def print_model(model: 'Base', include_none=False):
     m = model_dict(model, include_none=include_none)
     try:
         print(m)
@@ -373,7 +389,7 @@ def print_model(model, include_none=False):
         pass
 
 
-def model_dict(model, include_none=False):
+def model_dict(model: 'Base', include_none: bool = False) -> Dict[str, Any]:
     # create dict from table model
     m = {a.key: getattr(model, a.key) for a in sa.inspect(model).mapper.column_attrs}
     if not include_none:
@@ -382,7 +398,31 @@ def model_dict(model, include_none=False):
     return m
 
 
-def df_from_row(model):
+def set_row_vals(model: 'Base', vals: Dict[str, Any]) -> 'Base':
+    """Set row values from dict
+    - used for update queue so far
+    """
+    table = model.__table__  # type: Table
+    fks = {c.parent.name: c for c in table.foreign_keys}  # type: Dict[str, ForeignKey]
+
+    for col_name, val in vals.items():
+
+        fk = fks.get(col_name, None)
+        if not fk is None:
+            table_rel = fk.column.table  # type: Table
+            # assume fk field alias is "name"
+            row_rel = select_row_by_secondary(table_rel, 'name', val)
+            if not row_rel is None:
+                val = row_rel[fk.column.name]
+            else:
+                log.warning(f'No relation found for {col_name}={val}')
+
+        setattr(model, col_name, val)
+
+    return model
+
+
+def df_from_row(model: 'Base') -> pd.DataFrame:
     # convert single row model from db to df with cols as index (used to display all data single row)
     m = model_dict(model, include_none=True)
     df = pd.DataFrame.from_dict(m, orient='index', columns=['Value']) \

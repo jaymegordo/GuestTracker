@@ -132,7 +132,7 @@ def read_unit_hrs(p):
 
 
 def update_comp_smr():
-    from guesttracker.gui.dialogs import base as dlgs
+    from guesttracker.gui.dialogs import dialogbase as dlgs
     try:
         cursor = db.cursor
         res = cursor.execute('updateUnitComponentSMR').fetchall()[0]

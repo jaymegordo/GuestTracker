@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (
     QStyleOptionTab, QStylePainter, QTabBar, QTableWidget, QTableWidgetItem,
     QTabWidget, QTextBrowser, QTextEdit, QTreeView, QVBoxLayout, QWidget)
 
-from guesttracker import VERSION, StrNone
+from guesttracker import VERSION, IntNone, StrNone
 from guesttracker import config as cf
 from guesttracker import dbtransaction as dbt
 from guesttracker import delta, dt
@@ -84,7 +84,7 @@ class InputField():
         self.like = like
         self.exclude_filter = exclude_filter
         self.func = func
-        self.box_layout = None  # type: QHBoxLayout
+        self._box_layout = None
         self.cb = None  # type: ff.CheckBox
 
     @property
@@ -95,8 +95,8 @@ class InputField():
             val = f.str_to_bool(val)
 
         # make any value 'like'
-        if self.like:
-            val = f'*{val}*'
+        if self.like and isinstance(val, str):
+            val = f'*{val}*' if not val.strip() == '' else None
         elif not self.func is None:
             val = self.func(val)
 
@@ -105,6 +105,23 @@ class InputField():
     @val.setter
     def val(self, val: Any):
         self.box.val = val
+
+    @property
+    def isna(self) -> bool:
+        """Check if value is null"""
+        val = self.val
+        if isinstance(val, str):
+            return val.strip() == ''
+        else:
+            return bool(pd.isna(val))
+
+    @property
+    def box_layout(self) -> QHBoxLayout:
+        return self._box_layout
+
+    @box_layout.setter
+    def box_layout(self, layout: QHBoxLayout):
+        self._box_layout = layout
 
     def set_default(self):
         if not self.box is None and not self.default is None:
@@ -175,6 +192,7 @@ class InputForm(BaseDialog):
         self.form_layout = FormLayout()
         self.v_layout.addLayout(self.form_layout)
         self.fields = {}  # type: Dict[str, InputField]
+        self.fields_db = {}  # type: Dict[str, InputField]
         self.items = None
         self.parent = parent
         self.enforce_all = enforce_all
@@ -273,19 +291,30 @@ class InputForm(BaseDialog):
                 if prev_item in items:
                     field_change.box.val = prev_item
 
+    def add_field(self, field: InputField) -> None:
+        """Add field to form layout"""
+        # field already exists, remove it from layout
+        if field.name in self.fields:
+            field_remove = self.fields.pop(field.name)
+            index = self.form_layout.removeRow(field_remove.box_layout)
+            self.fields_db.pop(field_remove.col_db)
+
+        self.fields[field.name] = field
+        self.fields_db[field.col_db] = field
+
     def add_input(
             self,
             field: InputField,
-            items: list = None,
-            layout: QFormLayout = None,
+            items: Union[List[str], None] = None,
+            layout: Union[FormLayout, None] = None,
             checkbox: bool = False,
             cb_enabled: bool = True,
-            index: int = None,
-            btn: QPushButton = None,
-            tooltip: str = None,
-            cb_spacing: int = None,
+            index: IntNone = None,
+            btn: Union[QPushButton, None] = None,
+            tooltip: StrNone = None,
+            cb_spacing: IntNone = None,
             enabled: bool = True,
-            box_changed: Callable = None) -> InputField:
+            box_changed: Union[Callable, None] = None) -> InputField:
         """Add input field to form"""
         text, dtype = field.text, field.dtype
 
@@ -344,13 +373,14 @@ class InputForm(BaseDialog):
         field.box = box
         box.field = field
         field.set_default()
-        self.fields[field.col_db] = field
 
         if not box_changed is None:
             box.changed.connect(box_changed)
 
         if layout is None:
             layout = self.form_layout
+
+        self.add_field(field)
 
         label = QLabel(f'{text}:')
         if not tooltip is None:
@@ -396,8 +426,13 @@ class InputForm(BaseDialog):
             return True
 
     def add_default_fields(self, input_type: str = 'refresh'):
+        """Add all default input fields for refresh/addrows dialogs
 
-        # get column names from dbmodel.py
+        Parameters
+        ----------
+        input_type : str, optional
+            default 'refresh'
+        """
         table = dbt.get_table_model(table_name=self.name)
 
         kw = {}
@@ -426,7 +461,7 @@ class InputForm(BaseDialog):
                 table_rel = fk.column.table  # type: Table
 
                 # use "name" column as column to add filter for instead of uid
-                text = col.name.replace('_id', ' _name')
+                text = col.name.replace('_id', '_name')
                 col = table_rel.columns.get('name', None)  # type: Column
 
             # add filter for column

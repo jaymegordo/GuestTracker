@@ -13,7 +13,7 @@ from guesttracker import functions as f
 from guesttracker.database import db
 from guesttracker.gui import _global as gbl
 from guesttracker.gui import formfields as ff
-from guesttracker.gui.dialogs.base import BaseDialog, add_okay_cancel
+from guesttracker.gui.dialogs.dialogbase import BaseDialog, add_okay_cancel
 from guesttracker.queries.fc import FCOpen
 from guesttracker.queries.misc import ACMotorInspections
 from guesttracker.queries.misc import Parts as _Parts

@@ -327,7 +327,7 @@ def get_recent_dls_unit(unit: str) -> Path:
 def zip_recent_dls_unit(unit: str, _zip=True) -> Path:
     """Func for gui to find (optional zip) most recent dls folder by parsing date in folder title"""
     from guesttracker.gui import _global as gbl
-    from guesttracker.gui.dialogs.base import msg_simple, msgbox
+    from guesttracker.gui.dialogs.dialogbase import msg_simple, msgbox
 
     p_dls = get_recent_dls_unit(unit=unit)
 

@@ -17,7 +17,7 @@ table_data: Dict[str, TDItem] = defaultdict(
     TDItem,
     Reservations=TDItem(
         primary_date='arrival_date',
-        warn_delete_fields=['unit_assignments'],
+        warn_delete_fields=['unit_assignments', 'customer_name', 'arrival_date'],
         exclude_add_fields=['cancel_date', 'notes', 'requests']
     ),
     Customers=TDItem(

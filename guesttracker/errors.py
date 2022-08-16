@@ -420,7 +420,7 @@ def display_error(
 
     tb_msg = format_traceback() if tb_msg is None else tb_msg
 
-    from guesttracker.gui.dialogs.base import show_err_msg
+    from guesttracker.gui.dialogs.dialogbase import show_err_msg
     show_err_msg(text=msg, tb_text=tb_msg)
 
 
@@ -433,7 +433,7 @@ class Error(Exception):
         update_statusbar(msg=msg, **kw)
 
     def show_warn_dialog(self, msg=None):
-        from guesttracker.gui.dialogs.base import msg_simple
+        from guesttracker.gui.dialogs.dialogbase import msg_simple
         msg_simple(msg)
 
 

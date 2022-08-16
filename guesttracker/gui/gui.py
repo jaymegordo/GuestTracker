@@ -17,7 +17,7 @@ from guesttracker import getlog, users
 from guesttracker.database import db
 from guesttracker.gui import _global as gbl
 from guesttracker.gui import tables as tbls
-from guesttracker.gui.dialogs import base as dlgs
+from guesttracker.gui.dialogs import dialogbase as dlgs
 from guesttracker.gui.multithread import Worker
 from guesttracker.utils import fileops as fl
 

@@ -35,7 +35,7 @@ from guesttracker.gui.delegates import (
     CellDelegate, ComboDelegate, DateDelegate, DateTimeDelegate,
     HighlightCellDelegate, TimeDelegate)
 from guesttracker.gui.dialogs import addrows as adr
-from guesttracker.gui.dialogs import base as dlgs
+from guesttracker.gui.dialogs import dialogbase as dlgs
 from guesttracker.gui.dialogs import refreshtables as rtbls
 from guesttracker.gui.dialogs.addrows import (
     AddEmail, AddEvent, AddPart, AddUnit)
