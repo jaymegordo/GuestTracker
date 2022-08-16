@@ -217,10 +217,10 @@ class Reservations(HBAAddRow):
             if f.str_to_bool(row[res_col].text()):
                 self.update_statusbar(f'{row[name_col].text()} is reserved.', warn=True)
                 self.tbl.deselect_row(cell.row())
-                break
             else:
                 selected_units.append(abbr)
 
+        # combine selected units to string and set back to unit_assignments field
         units_combined = ', '.join(sorted(selected_units))
         self.fields_db['unit_assignments'].val = units_combined
 
