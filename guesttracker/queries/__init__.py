@@ -449,7 +449,14 @@ class QueryBase(metaclass=ABCMeta):
     def df(self, data: pd.DataFrame):
         self._df = data
 
-    def _get_df(self, default=False, base=False, prnt=False, skip_process=False, **kw) -> pd.DataFrame:
+    def _get_df(
+            self,
+            default: bool = False,
+            base: bool = False,
+            prnt: bool = False,
+            skip_process: bool = False,
+            lower_cols: bool = False,
+            **kw) -> pd.DataFrame:
         """Execute query and return dataframe
 
         Parameters
@@ -462,6 +469,8 @@ class QueryBase(metaclass=ABCMeta):
             Print query sql, default False
         skip_process : bool, optional
             Allow skipping process_df for troubleshooting, default False
+        lower_cols : bool, optional
+            Lowercase column names, default False
 
         Returns
         ---
@@ -478,7 +487,7 @@ class QueryBase(metaclass=ABCMeta):
             .read_sql(sql=sql, con=db.engine) \
             .pipe(f.default_df) \
             .pipe(self.sort_primary_date) \
-            .pipe(f.convert_df_view_cols, m=self.view_cols) \
+            .pipe(f.convert_df_view_cols, m=self.view_cols, do=not lower_cols) \
             .pipe(self._process_df, do=not skip_process) \
             .pipe(f.set_default_dtypes, m=self.default_dtypes)
 

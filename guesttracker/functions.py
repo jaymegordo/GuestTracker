@@ -68,9 +68,11 @@ def get_dict_db_view(title: str) -> Dict[str, str]:
     return inverse(get_dict_view_db(title))
 
 
-def convert_df_view_cols(df: pd.DataFrame, m: Dict[str, str]):
+def convert_df_view_cols(df: pd.DataFrame, m: Dict[str, str], do: bool = True) -> pd.DataFrame:
     """convert db cols to view cols from dict of conversions. keep original if new col not in dict"""
-    df.columns = [m[c] if c in m.keys() else c for c in df.columns]
+    if do:
+        df.columns = [m[c] if c in m.keys() else c for c in df.columns]
+
     return df
 
 
@@ -690,7 +692,7 @@ def default_data(df):
         .pipe(convert_int64)
 
 
-def default_df(df):
+def default_df(df: pd.DataFrame) -> pd.DataFrame:
     """Simple df date/int conversions to apply to any df"""
     from jgutils import pandas_utils as pu
     return df \

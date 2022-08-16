@@ -14,10 +14,11 @@ from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtWidgets import (
     QAbstractItemView, QApplication, QButtonGroup, QCheckBox, QComboBox,
     QDateEdit, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame,
-    QHBoxLayout, QInputDialog, QLabel, QLineEdit, QListView, QMessageBox,
-    QPushButton, QRadioButton, QSizePolicy, QSlider, QSpinBox, QStyle,
-    QStyleOptionTab, QStylePainter, QTabBar, QTableWidget, QTableWidgetItem,
-    QTabWidget, QTextBrowser, QTextEdit, QTreeView, QVBoxLayout, QWidget)
+    QGridLayout, QHBoxLayout, QInputDialog, QLabel, QLineEdit, QListView,
+    QMessageBox, QPushButton, QRadioButton, QSizePolicy, QSlider, QSpinBox,
+    QStyle, QStyleOptionTab, QStylePainter, QTabBar, QTableWidget,
+    QTableWidgetItem, QTabWidget, QTextBrowser, QTextEdit, QTreeView,
+    QVBoxLayout, QWidget)
 
 from guesttracker import VERSION, IntNone, StrNone
 from guesttracker import config as cf
@@ -139,7 +140,9 @@ class BaseDialog(QDialog):
         self.settings = gbl.get_settings()
         # self.minesite = gbl.get_minesite()
         self.mw = self.mainwindow
-        self.v_layout = QVBoxLayout(self)
+        self.grid_layout = QGridLayout(self)
+        self.v_layout = QVBoxLayout()
+        self.grid_layout.addLayout(self.v_layout, 0, 0, 1, 1)
 
     def show(self):
         # NOTE should actually be max of window height/width, otherwise dialog can overflow screen

@@ -21,7 +21,6 @@ from guesttracker import delta, dt
 from guesttracker import errors as er
 from guesttracker import functions as f
 from guesttracker import getlog
-from jgutils import pandas_utils as pu
 from jgutils.secrets import SecretsManager
 
 if TYPE_CHECKING:
@@ -432,9 +431,12 @@ class DB(object):
 
         return self.query_single_val(q)
 
-    def get_df_saved(self, name: str) -> Union[pd.DataFrame, None]:
+    def get_df_saved(self, name: str, force: bool = False, **kw) -> Union[pd.DataFrame, None]:
         """Return df from saved cache"""
         # TODO load if doesn't exist?
+        if force:
+            return None
+
         return self.dfs.get(name, None)
 
     def save_df(self, df: Union[pd.DataFrame, List[str]], name: str) -> None:
@@ -661,8 +663,7 @@ class DB(object):
         if df is None:
             from guesttracker.queries.hba import HBAQueryBase
             query = HBAQueryBase(name='Customers')
-            df = query.get_df() \
-                .pipe(pu.lower_cols)
+            df = query.get_df(lower_cols=True)
 
             self.save_df(df, name)
 
@@ -670,6 +671,7 @@ class DB(object):
 
     def get_df_unit(
             self,
+            active_only: bool = True,
             **kw) -> pd.DataFrame:
         """Return df of all units in database
 
@@ -687,32 +689,38 @@ class DB(object):
         pd.DataFrame
         """
         name = 'units'
-        df = self.get_df_saved(name)
+        df = self.get_df_saved(name, **kw)
 
         # load if doesn't exist
         if df is None:
             from guesttracker.queries.hba import HBAQueryBase
             query = HBAQueryBase(name='Units')
-            df = query.get_df()
+            df = query.get_df(lower_cols=True)
 
             self.save_df(df, name)
 
+        if active_only:
+            df = df.query('active == 1')
+
         return df
 
-    def get_df_reservations(self) -> pd.DataFrame:
+    def get_df_reservations(self, **kw) -> pd.DataFrame:
         name = 'reservations'
-        df = self.get_df_saved(name)
+        df = self.get_df_saved(name, **kw)
 
         if df is None:
             # from guesttracker.queries.hba import HBAQueryBase
             # query = HBAQueryBase(name='Reservations')
 
             a = pk.Table('Reservations')
-            q = Query.from_(a)
+            q = Query.from_(a) \
+                .select(a.unit_assignments, a.arrival_date, a.departure_date, a.cancel_date)
 
             df = pd.read_sql(sql=q.get_sql(), con=db.engine) \
+                .pipe(lambda df: df[df.cancel_date.isna()]) \
                 .assign(unit_assignments=lambda x: x.unit_assignments.str.split(',')).explode('unit_assignments') \
-                .rename(columns=dict(unit_assignments='unit'))
+                .rename(columns=dict(unit_assignments='unit')) \
+                .reset_index(drop=True)
 
             self.save_df(df, name)
 

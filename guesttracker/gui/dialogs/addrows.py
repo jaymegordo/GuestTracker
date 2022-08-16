@@ -3,8 +3,10 @@ import uuid
 from datetime import datetime as dt
 from typing import TYPE_CHECKING, Any, Dict, List, Union
 
+import pandas as pd
 from PyQt6.QtCore import QSize, Qt, pyqtSlot
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton
+from PyQt6.QtWidgets import (
+    QHBoxLayout, QLabel, QPushButton, QTableView, QVBoxLayout)
 
 from guesttracker import config as cf
 from guesttracker import dbtransaction as dbt
@@ -16,7 +18,8 @@ from guesttracker.gui import _global as gbl
 from guesttracker.gui import formfields as ff
 from guesttracker.gui.dialogs.dialogbase import (
     InputField, InputForm, add_linesep, msg_simple, unit_exists)
-from guesttracker.gui.dialogs.tables import UnitOpenFC
+from guesttracker.gui.dialogs.tables import DialogTableWidget, UnitOpenFC
+from guesttracker.utils import dbconfig as dbc
 from guesttracker.utils import dbmodel as dbm
 
 if TYPE_CHECKING:
@@ -28,7 +31,7 @@ log = getlog(__name__)
 class AddRow(InputForm):
     def __init__(
             self,
-            parent: Union['TableWidget', None],
+            parent: Union['TableWidget', None] = None,
             window_title: str = 'Add Item',
             **kw):
         super().__init__(parent=parent, window_title=window_title, **kw)
@@ -48,8 +51,8 @@ class AddRow(InputForm):
         else:
             # Temp testing vals
             self.data_model = None
-            self.title = 'Event Log'
-            self.tablename = 'EventLog'
+            self.title = 'Reservations'
+            self.tablename = 'Reservations'
             self.dbtable = getattr(dbm, self.tablename)
 
         return self.dbtable(uid=uuid.uuid4())
@@ -144,7 +147,32 @@ class HBAAddRow(AddRow):
 
 class Reservations(HBAAddRow):
     def __init__(self, **kw):
+        kw['name'] = 'Reservations'
         super().__init__(**kw)
+
+        self.v_layout2 = QVBoxLayout()
+        self.grid_layout.addLayout(self.v_layout2, 0, 1, 1, 1)
+
+        self.dfu = db.get_df_unit() \
+            .drop(columns=['uid', 'active']) \
+            .sort_values(by=['class_name', 'name'], ascending=[False, True]) \
+            .assign(reserved=False)
+
+        self.tbl = DialogTableWidget(
+            df=pd.DataFrame(columns=self.dfu.columns.tolist()),
+            name='units_table',
+            col_widths=dict(name=200),
+            scroll_bar=True,
+            min_width=500)
+        self.tbl.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
+        self.tbl.setMaximumHeight(500)
+        self.tbl.itemSelectionChanged.connect(self.on_unit_selection_change)
+        self.fields_db['arrival_date'].box.changed.connect(self.set_data)
+        self.fields_db['departure_date'].box.changed.connect(self.set_data)
+
+        self.v_layout2.addWidget(self.tbl)
+
+        self.df_res = db.get_df_reservations()
 
         self.df_cust = db.get_df_customers()
 
@@ -156,6 +184,45 @@ class Reservations(HBAAddRow):
             ),
             items=f.clean_series(self.df_cust['name']),
         )
+
+        self.set_data()
+
+    def set_data(self):
+        date_arrival = self.fields_db['arrival_date'].val
+        date_departure = self.fields_db['departure_date'].val
+
+        self.dfu = dbc.set_unit_availability(
+            df_unit=self.dfu,
+            df_res=self.df_res,
+            date_arrival=date_arrival,
+            date_departure=date_departure)
+
+        self.tbl.display_data(self.dfu, resize_cols=True)
+        self.on_unit_selection_change()
+
+    def on_unit_selection_change(self):
+        """Update units_assigned with selected units if valid"""
+        rows = self.tbl.selected_rows()
+
+        df = self.dfu.copy()
+        abbr_col = df.columns.get_loc('abbr')
+        res_col = df.columns.get_loc('reserved')
+        name_col = df.columns.get_loc('name')
+        selected_units = []
+
+        for row in rows:
+            cell = row[abbr_col]
+            abbr = cell.text()
+
+            if f.str_to_bool(row[res_col].text()):
+                self.update_statusbar(f'{row[name_col].text()} is reserved.', warn=True)
+                self.tbl.deselect_row(cell.row())
+                break
+            else:
+                selected_units.append(abbr)
+
+        units_combined = ', '.join(sorted(selected_units))
+        self.fields_db['unit_assignments'].val = units_combined
 
     def accept(self):
         row = self.row

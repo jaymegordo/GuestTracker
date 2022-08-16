@@ -10,6 +10,7 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 from guesttracker import getlog
 from guesttracker.database import db
+from guesttracker.gui.dialogs import addrows as adr
 from guesttracker.utils import dbmodel as dbm
 from jgutils import pandas_utils as pu
 from jgutils.functions import PrettyDict as PD
@@ -262,3 +263,6 @@ for table_name, table in model.metadata.tables.items():
 
 set(col_types)
 # %%
+app = gbl.get_qt_app()
+dlg = adr.Reservations()
+dlg.exec()

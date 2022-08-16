@@ -19,6 +19,7 @@ from PyQt6.QtWidgets import (
 # from selenium.webdriver.remote.webdriver import WebDriver
 from sqlalchemy.orm.query import Query as SQLAQuery
 
+from guesttracker import IntNone
 from guesttracker import config as cf
 from guesttracker import dbtransaction as dbt
 from guesttracker import dt
@@ -80,10 +81,10 @@ class TableView(QTableView):
 
     def __init__(
             self,
-            parent: 'TableWidget' = None,
+            parent: Union['TableWidget', None] = None,
             default_headers: Union[List[str], None] = None,
             editable=True,
-            header_margin: int = None,
+            header_margin: IntNone = None,
             warn_rows: int = 2000,
             *args,
             **kwargs):
@@ -1457,6 +1458,15 @@ class HBATableWidget(TableWidget):
         """
         warn_keys = dbc.table_data[self.name].get('warn_delete_fields', ['name'])
         self._remove_row(name=self.name, warn_keys=warn_keys)
+
+
+class Units(HBATableWidget):
+    class View(HBATableWidget.View):
+        def __init__(self, parent: HBATableWidget):
+            super().__init__(parent=parent)
+
+            lists = cf.config['Lists']
+            self.set_combo_delegate(col='Active', items=lists['TrueFalse'], allow_blank=False)
 
 
 class EventLogBase(TableWidget):

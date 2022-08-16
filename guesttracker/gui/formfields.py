@@ -314,14 +314,6 @@ class SpinBox(QSpinBox, FormFields):
         if not range is None:
             self.setRange(*range)
 
-    # @FormFields.val.getter
-    # def val(self):
-    #     """Always return None instead of 0
-    #     NOTE this may need to change but is good for now
-    #     """
-    #     v = super().val
-    #     return v if not v == 0 else None
-
 
 class MultiSelectList(QListWidget, FormFields):
     """Class to handle multiple selection of items in a list"""

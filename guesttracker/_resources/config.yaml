@@ -68,6 +68,9 @@ Lists:
         - RAMP
         - Service
         - Parts
+    TrueFalse:
+        - 'True'
+        - 'False'
 
 # Convert title to tablename > can select from views but not update them
 TableName:

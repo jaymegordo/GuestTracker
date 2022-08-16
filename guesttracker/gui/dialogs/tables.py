@@ -1,7 +1,7 @@
 
 from datetime import datetime as dt
 from datetime import timedelta as delta
-from typing import TYPE_CHECKING, Dict, Union
+from typing import TYPE_CHECKING, Dict, List, Union
 
 import pandas as pd
 from PyQt6.QtCore import QSize, Qt
@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QAbstractItemView, QAbstractScrollArea, QHBoxLayout, QTableWidget,
     QTableWidgetItem)
 
+from guesttracker import IntNone
 from guesttracker import functions as f
 from guesttracker.database import db
 from guesttracker.gui import _global as gbl
@@ -28,12 +29,13 @@ class DialogTableWidget(QTableWidget):
 
     def __init__(
             self,
-            df: Union[pd.DataFrame, None] = None,
+            df: pd.DataFrame,
             query: Union['QueryBase', None] = None,
             editable: bool = False,
             name: str = 'table',
             col_widths: Union[Dict[str, int], None] = None,
             scroll_bar: bool = False,
+            min_width: IntNone = None,
             **kw):
         super().__init__()
         self.setObjectName(name)
@@ -44,7 +46,7 @@ class DialogTableWidget(QTableWidget):
         self.setHorizontalHeaderLabels(list(df.columns))
 
         if col_widths:
-            self.min_width = sum(col_widths.values())
+            self.min_width = sum(col_widths.values()) if min_width is None else min_width
             for col, width in col_widths.items():
                 self.setColumnWidth(df.columns.get_loc(col), width)
 
@@ -60,7 +62,11 @@ class DialogTableWidget(QTableWidget):
         self.setVerticalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
 
-        f.set_self(vars())
+        self.df = df
+        self.query = query
+        self.ediiable = editable
+        self.name = name
+        self.scroll_bar = scroll_bar
 
     def sizeHint(self):
         """"Sketch, but have to override size width"""
@@ -75,11 +81,26 @@ class DialogTableWidget(QTableWidget):
         else:
             return size
 
+    def selected_rows(self) -> List[List[QTableWidgetItem]]:
+        """Return list of selected rows"""
+        sel = self.selectedItems()
+        num_cols = self.columnCount()
+
+        return [sel[i:i + num_cols] for i in range(0, len(sel), num_cols)]
+
+    def deselect_row(self, row: int) -> None:
+        self.blockSignals(True)
+        for cell in self.selectedItems():
+            if cell.row() == row:
+                cell.setSelected(False)
+
+        self.blockSignals(False)
+
     def set_formats(self, df: pd.DataFrame) -> None:
         date_cols = df.dtypes[df.dtypes == 'datetime64[ns]'].index.to_list()
         int_cols = df.dtypes[df.dtypes == 'Int64'].index.to_list()
-        self.formats.update({col: '{:%Y-%m-%d}' for col in date_cols})
-        self.formats.update({col: '{:,.0f}' for col in int_cols})
+        self.formats |= {col: '{:%Y-%m-%d}' for col in date_cols}
+        self.formats |= {col: '{:,.0f}' for col in int_cols}
 
     def display_data(self, df: pd.DataFrame, resize_cols: bool = False) -> None:
         if df is None:
@@ -87,7 +108,7 @@ class DialogTableWidget(QTableWidget):
 
         self.set_formats(df=df)
         self.setRowCount(df.shape[0])
-        self.setVerticalHeaderLabels(list(df.index.astype(str)))
+        self.setVerticalHeaderLabels(df.index.astype(str).tolist())
 
         # set delegate for column alignment based on dtype
         from guesttracker.gui.delegates import TableWidgetDelegate
@@ -97,12 +118,11 @@ class DialogTableWidget(QTableWidget):
         df_display = f.df_to_strings(df=df, formats=self.formats)
 
         query = self.query
+        bg, text = None, None
         if not query is None:
             stylemap = query.get_stylemap(df=df)
-            if stylemap is None:
-                return
-
-            bg, text = stylemap[0], stylemap[1]
+            if not stylemap is None:
+                bg, text = stylemap[0], stylemap[1]
 
         for irow, row in enumerate(df.index):
             for icol, col in enumerate(df.columns):
@@ -110,7 +130,7 @@ class DialogTableWidget(QTableWidget):
                 item = QTableWidgetItem(str(df_display.loc[row, col]))
 
                 # set background and text colors
-                if not query is None:
+                if not (bg is None or text is None):
                     color_bg = bg[col].get(row, None)
                     color_text = text[col].get(row, None)
 
@@ -126,6 +146,7 @@ class DialogTableWidget(QTableWidget):
 
         self.resizeRowsToContents()
         self.adjustSize()
+        self.df = df
 
 
 class TableDialog(BaseDialog):
@@ -149,17 +170,17 @@ class TableDialog(BaseDialog):
         if isinstance(cols, dict):
             col_widths = cols
             cols = cols.keys()
-            resize_cols = False
+            self.resize_cols = False
         else:
             col_widths = None
-            resize_cols = True
+            self.resize_cols = True
 
             if not df is None:
                 cols = df.columns.tolist()
 
         # init table with default cols
         if simple_table:
-            tbl = DialogTableWidget(
+            self.tbl = DialogTableWidget(
                 df=pd.DataFrame(columns=cols),
                 col_widths=col_widths,
                 name=name,
@@ -173,9 +194,9 @@ class TableDialog(BaseDialog):
                 raise RuntimeError('Must pass query obj if not using simple table')
 
             self.query = query
-            tbl = tbls.TableView(parent=self, default_headers=cols, editable=editable)
+            self.tbl = tbls.TableView(parent=self, default_headers=cols, editable=editable)
 
-        self.v_layout.addWidget(tbl)
+        self.v_layout.addWidget(self.tbl)
 
         add_okay_cancel(dlg=self, layout=self.v_layout)
 

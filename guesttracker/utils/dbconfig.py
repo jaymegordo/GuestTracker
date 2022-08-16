@@ -1,6 +1,9 @@
 
 from collections import defaultdict
+from datetime import datetime as dt
 from typing import Dict, List, TypedDict
+
+import pandas as pd
 
 # TODO add validation funcs here?
 
@@ -31,9 +34,33 @@ table_data: Dict[str, TDItem] = defaultdict(
 )
 
 
-def validate_unit_availability(session, unit_id: str, arrival_date: str, departure_date: str) -> bool:
+def set_unit_availability(
+        df_unit: pd.DataFrame,
+        df_res: pd.DataFrame,
+        date_arrival: dt,
+        date_departure: dt) -> pd.DataFrame:
+    """Add "reserved" column to unit df based on all previous reservations (excluding cancellations)
+
+    Parameters
+    ----------
+    df_unit : pd.DataFrame
+    df_res : pd.DataFrame
+        df with reservations split into units and dates
+    date_arrival : dt
+    date_departure : dt
+
+    Returns
+    -------
+    pd.DataFrame
     """
-    Validate that the unit is available for the given dates.
-    """
-    # TODO
-    return True
+    # check wether each unit is available for the given dates
+    df_res = df_res \
+        .assign(reserved=lambda x:
+                ((date_arrival >= x.arrival_date) &
+                 (date_arrival < x.departure_date)) |
+                ((date_departure > x.arrival_date) &
+                    (date_departure <= x.departure_date))) \
+        .query('reserved == True')
+
+    return df_unit \
+        .assign(reserved=lambda x: x.abbr.isin(df_res.unit.unique()))
